@@ -2,24 +2,21 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // This rule is for your Profile page
+    // --- UPDATED RULES FOR 'users' ---
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-
-    // --- ADD THIS NEW BLOCK ---
-    match /bloodRequests/{requestId} {
-      // Any logged-in user can see all requests (for the ActiveRequests page)
+      // Any logged-in user can READ any user's profile (for the search page)
       allow read: if request.auth != null;
-      
-      // Any logged-in user can create a new request
-      allow create: if request.auth != null;
-      
-      // Only the user who created the request can update or delete it
-      // (This will be useful later)
+
+      // A user can ONLY WRITE (update/create) their OWN profile
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    // --- END OF UPDATED RULES ---
+
+    // Rules for bloodRequests (already correct)
+    match /bloodRequests/{requestId} {
+      allow read, create: if request.auth != null;
       allow update, delete: if request.auth != null && request.auth.uid == resource.data.uid;
     }
-    // --- END OF NEW BLOCK ---
 
   }
 }

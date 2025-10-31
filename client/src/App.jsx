@@ -9,7 +9,7 @@ import RequestBlood from './pages/RequestBlood';
 import ActiveRequests from './pages/ActiveRequests';
 import ForgotPassword from './pages/ForgetPassword';
 import MyRequests from './pages/MyRequests';
-
+import FindDonors from './pages/FindDoners';
 function App() {
   return (
     <div>
@@ -38,6 +38,7 @@ function App() {
             element={<ProtectedRoute><MyRequests /></ProtectedRoute>} 
           />
           <Route path="/active-requests" element={<ActiveRequests />} />
+          <Route path="/find-donors" element={<FindDonors />} />
           <Route path="/" element={<h1>Welcome Home! (You are logged in)</h1>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

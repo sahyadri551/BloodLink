@@ -1,9 +1,8 @@
-import React, { Fragment } from "react"; // <-- Import Fragment
+import React, { Fragment } from "react";
 import { Link, useNavigate, NavLink } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { useAuth } from "../contexts/AuthContext";
-// 1. Import the Menu components from Headless UI
 import { Menu, MenuButton, MenuItems, MenuItem, Transition } from "@headlessui/react";
 
 function Navbar() {
@@ -30,7 +29,6 @@ function Navbar() {
         <div className="flex items-center space-x-6">
           {currentUser ? (
             <>
-              {/* These links stay visible */}
               <NavLink
                 to="/active-requests"
                 className={({ isActive }) =>
@@ -40,6 +38,14 @@ function Navbar() {
                 Active Requests
               </NavLink>
               <NavLink
+                to="/find-donors"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
+                }
+              >
+                Find Donors
+              </NavLink>
+              <NavLink
                 to="/request-blood"
                 className={({ isActive }) =>
                   isActive ? "text-red-600 font-bold" : "text-gray-700 hover:text-red-600 font-medium"
@@ -47,18 +53,12 @@ function Navbar() {
               >
                 Request Blood
               </NavLink>
-
-              {/* 2. This is the new Dropdown Menu */}
               <Menu as="div" className="relative inline-block text-left">
-                {/* The ... (kebab) button that triggers the dropdown */}
                 <MenuButton className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-                  {/* You can use an icon here, but for simplicity, we use text */}
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm0 6a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm0 6a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
                   </svg>
                 </MenuButton>
-
-                {/* 3. The Dropdown Panel */}
                 <Transition
                   as={Fragment}
                   enter="transition ease-out duration-100"
@@ -70,7 +70,6 @@ function Navbar() {
                 >
                   <MenuItems className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
-                      {/* 4. Dropdown Items */}
                       <div className="px-4 py-2 text-sm text-gray-500 border-b">
                         Logged in as<br/>
                         <strong className="text-gray-700">{currentUser.email}</strong>
@@ -121,7 +120,6 @@ function Navbar() {
             </>
           ) : (
             <>
-              {/* This is the logged-out state (unchanged) */}
               <NavLink
                 to="/active-requests"
                 className={({ isActive }) =>
