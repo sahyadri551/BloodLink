@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -17,6 +18,13 @@ function Register() {
   });
 
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
+    useEffect(() => {
+    if (currentUser) {
+      console.log("User already logged in, redirecting to home...");
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -82,13 +90,13 @@ function Register() {
 
         await sendEmailVerification(userCredential.user);
 
-        console.log("✅ User created successfully:", userCredential.user);
+        console.log("User created successfully:", userCredential.user);
         alert("Registration successful! Please check your email inbox to verify your account.");
         
         setFormData({ email: '', password: '', confirmPassword: '' });
         navigate('/login');
       } catch (error) {
-      console.error("❌ Firebase registration error:", error.code);
+      console.error("Firebase registration error:", error.code);
 
       if (error.code === 'auth/email-already-in-use') {
         alert("This email address is already registered. Please try to log in instead.");
@@ -97,7 +105,7 @@ function Register() {
       }
     }
     } else {
-      console.warn("❌ Validation failed:", errors);
+      console.warn("Validation failed:", errors);
     }
   };
 

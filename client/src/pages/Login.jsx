@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from '../firebase/config';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,13 @@ function Login() {
   });
 
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  useEffect(() => {
+  if (currentUser) {
+    console.log("User already logged in, redirecting to home...");
+    navigate('/');
+  }
+}, [currentUser, navigate]);
 
   const validate = () => {
     let valid = true;
@@ -46,7 +54,7 @@ function Login() {
     e.preventDefault();
 
     if (!validate()) {
-      console.warn("❌ Validation failed:", errors);
+      console.warn("Validation failed:", errors);
       alert("Please fill in all required fields.");
       return; 
     }
@@ -61,7 +69,7 @@ function Login() {
       const user = userCredential.user;
 
       if (user.emailVerified) {
-        console.log("✅ User signed in and verified:", user);
+        console.log("User signed in and verified:", user);
         setFormData({ email: '', password: '' });
         navigate('/');
       } else {
@@ -72,7 +80,7 @@ function Login() {
       }
 
     } catch (error) {
-      console.error("❌ Firebase login error:", error.code);
+      console.error("Firebase login error:", error.code);
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
         alert("Invalid email or password. Please try again.");
       } else {
@@ -131,6 +139,14 @@ function Login() {
           )}
         </div>
 
+        <div className="text-right mb-4">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-blue-600 hover:text-blue-800 underline"
+          >
+            Forgot Password?
+          </Link>
+        </div>
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded-md transition duration-200 hover:bg-blue-900"
