@@ -44,22 +44,16 @@ function ForgotPassword() {
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
           Reset Password
         </h1>
-
-        {/* Success Message */}
         {message && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
             {message}
           </div>
         )}
-
-        {/* Error Message */}
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
-
-        {/* Email Input */}
         <div className="mb-4">
           <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
             Email
@@ -85,8 +79,6 @@ function ForgotPassword() {
         >
           {loading ? 'Sending...' : 'Send Reset Link'}
         </button>
-
-        {/* Back to Login Link */}
         <div className="text-center mt-4">
           <Link
             to="/login"

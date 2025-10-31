@@ -74,7 +74,34 @@ function Navbar() {
                         Logged in as<br/>
                         <strong className="text-gray-700">{currentUser.email}</strong>
                       </div>
-                      
+                      {currentUser.role === 'admin' && (
+                        <MenuItem>
+                          {({ active }) => (
+                            <NavLink
+                              to="/admin-dashboard"
+                              className={`${
+                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                              } block px-4 py-2 text-sm font-bold text-red-600`} // Styled to stand out
+                            >
+                              Admin Dashboard
+                            </NavLink>
+                          )}
+                        </MenuItem>
+                      )}
+                      {currentUser.role === 'hospital' && currentUser.isVerified === true && (
+                        <MenuItem>
+                          {({ active }) => (
+                            <NavLink
+                              to="/create-camp"
+                              className={`${
+                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                              } block px-4 py-2 text-sm font-semibold text-blue-600`} // Styled to stand out
+                            >
+                              Create Blood Camp
+                            </NavLink>
+                          )}
+                        </MenuItem>
+                      )}
                       <MenuItem>
                         {({ active }) => (
                           <NavLink

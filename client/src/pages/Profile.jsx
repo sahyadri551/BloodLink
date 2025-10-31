@@ -1,15 +1,14 @@
-import React, { useState,useEffect } from 'react';
-import { db, storage } from '../firebase/config';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import {  db, storage } from '../firebase/config';
+import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext'; 
 import { useNavigate } from 'react-router-dom';
 
 function Profile() {
-  const { currentUser } = useAuth();
+  const { currentUser } = useAuth(); 
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(false); 
   const [profileData, setProfileData] = useState({
     name: '',
     gender: '',
@@ -22,38 +21,31 @@ function Profile() {
     lastDonationDate: '',
     availability: 'available',
     bio: '',
-    profilePicture: null,
+    profilePicture: null, 
+    profilePictureURL: '', 
   });
+
   useEffect(() => {
-    if (!currentUser) return;
-    const fetchProfileData = async () => {
-      setLoading(true); 
-      try {
-        const userDocRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(userDocRef);
+    if (currentUser) {
+      setProfileData({
+        name: currentUser.name || '',
+        gender: currentUser.gender || '',
+        dateOfBirth: currentUser.dateOfBirth || '',
+        bloodType: currentUser.bloodType || '',
+        email: currentUser.email || '', 
+        phone: currentUser.phone || '',
+        location: currentUser.location || '',
+        emergencyContact: currentUser.emergencyContact || '',
+        lastDonationDate: currentUser.lastDonationDate || '',
+        availability: currentUser.availability || 'available',
+        bio: currentUser.bio || '',
+        profilePictureURL: currentUser.profilePictureURL || null,
+        profilePicture: null,
+      });
+    }
+  }, [currentUser]);
 
-        if (docSnap.exists()) {
-          console.log("Profile data loaded:", docSnap.data());
-          setProfileData(docSnap.data()); 
-        } else {
-          console.log("No profile found, setting default email.");
-          setProfileData((prev) => ({
-            ...prev,
-            email: currentUser.email, 
-          }));
-        }
-      } catch (error) {
-        console.error("Error loading profile:", error);
-        alert("Failed to load profile data.");
-      } finally {
-        setLoading(false); 
-      }
-    };
-
-    fetchProfileData(); 
-
-  }, [currentUser]); 
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfileData((prev) => ({
@@ -70,19 +62,18 @@ function Profile() {
     }));
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!currentUser) {
       alert('You must be logged in to save your profile.');
       return;
     }
-
     setLoading(true);
-
     try {
       let photoURL = null;
+
       if (profileData.profilePicture && (profileData.profilePicture instanceof File)) {
-        console.log("New file detected, uploading...");
         const imageRef = ref(
           storage,
           `profilePictures/${currentUser.uid}/${profileData.profilePicture.name}`
@@ -90,12 +81,13 @@ function Profile() {
         await uploadBytes(imageRef, profileData.profilePicture);
         photoURL = await getDownloadURL(imageRef);
       }
-      const { profilePicture, ...restOfProfileData } = profileData;
 
+      const { profilePicture, ...restOfProfileData } = profileData;
       const dataToSave = {
-        ...restOfProfileData, 
-        profilePictureURL: photoURL || profileData.profilePictureURL || null, // Use the new URL, or keep the existing one
+        ...restOfProfileData,
+        profilePictureURL: photoURL || profileData.profilePictureURL || null,
         uid: currentUser.uid,
+        email: profileData.email, 
         updatedAt: new Date().toISOString(),
       };
 
@@ -103,7 +95,6 @@ function Profile() {
 
       alert('Profile saved successfully!');
       navigate('/');
-
     } catch (error) {
       console.error(' Error saving profile:', error);
       alert('Failed to save profile. Check console for details.');
@@ -117,7 +108,6 @@ function Profile() {
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
         Edit Your Profile
       </h1>
-
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex flex-col items-center">
           <label htmlFor="profilePicture" className="text-gray-700 font-medium mb-2">
@@ -153,6 +143,7 @@ function Profile() {
             )
             }
         </div>
+
 
         <div>
           <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
@@ -228,6 +219,7 @@ function Profile() {
           </select>
         </div>
 
+        {/* Email */}
         <div>
           <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
             Email
@@ -244,6 +236,7 @@ function Profile() {
           />
         </div>
 
+        {/* Phone */}
         <div>
           <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">
             Phone Number

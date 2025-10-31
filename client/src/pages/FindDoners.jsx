@@ -16,36 +16,23 @@ function FindDonors() {
     setDonors([]);
 
     try {
-      // 1. Start with the base query on the 'users' collection
       let q = query(collection(db, "users"));
-
-      // 2. Create an array of conditions.
-      // ALWAYS filter for available donors. This is the new server-side filter.
       let conditions = [where("availability", "==", "available")];
-
-      // 3. Add bloodType if it's provided
       if (bloodType) {
         conditions.push(where("bloodType", "==", bloodType));
       }
-
-      // 4. Add location if it's provided (and search in lowercase)
       if (location && location.trim() !== "") {
         conditions.push(
           where("location", "==", location.toLowerCase().trim())
         );
       }
-
-      // 5. Build the final query with all conditions
       const finalQuery = query(q, ...conditions);
-
-      // 6. Execute the query
       const querySnapshot = await getDocs(finalQuery);
       const results = querySnapshot.docs.map((doc) => doc.data());
       setDonors(results);
 
     } catch (error) {
-      console.error("❌ Error fetching donors:", error);
-      // This is the CRITICAL error you will see. The link must be clicked.
+      console.error("Error fetching donors:", error);
       if (error.code === 'failed-precondition') {
         alert(
           "This search requires a new database index. Please open the console (F12) and click the link in the error message to create it."
@@ -63,13 +50,10 @@ function FindDonors() {
       <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
         Find Blood Donors
       </h1>
-
-      {/* Search Form */}
       <form
         onSubmit={handleSearch}
         className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
       >
-        {/* Blood Type Filter */}
         <div>
           <label
             htmlFor="bloodType"
@@ -95,8 +79,6 @@ function FindDonors() {
             <option value="O-">O-</option>
           </select>
         </div>
-
-        {/* Location Filter */}
         <div>
           <label
             htmlFor="location"
@@ -114,8 +96,6 @@ function FindDonors() {
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
           />
         </div>
-
-        {/* Search Button */}
         <div className="flex items-end">
           <button
             type="submit"
@@ -128,31 +108,32 @@ function FindDonors() {
           </button>
         </div>
       </form>
-
-      {/* Search Results */}
-      {loading ? (
-        <p className="text-center text-gray-500">Searching for donors...</p>
-      ) : donors.length === 0 && searched ? (
-        <p className="text-center text-gray-500">
-          No donors found matching your criteria.
-        </p>
-      ) : (
+      {(() => {
+        if (loading) {
+          return <p className="text-center text-gray-500">Searching for donors...</p>;
+        }
+        if (donors.length === 0 && searched) {
+          return (
+            <p className="text-center text-gray-500">
+              No donors found matching your criteria.
+            </p>
+          );
+        }
+        return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {donors.map((donor) => {
-            // Proactively fixed SonarQube warning
             const statusColor =
               donor.availability === "available"
                 ? "text-green-600"
                 : "text-red-600";
             
-            // Proactively fixed SonarQube warning
             const formattedDate = donor.updatedAt
               ? new Date(donor.updatedAt).toLocaleDateString()
               : "N/A";
 
             return (
               <div
-                key={donor.uid} // FIX: Use stable UID for key
+                key={donor.uid} 
                 className="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6"
               >
                 <h2 className="text-lg font-semibold text-gray-800 mb-2">
@@ -168,13 +149,13 @@ function FindDonors() {
                   </span>
                 </p>
                 <p className="text-sm text-gray-500 mt-2 italic">
-                  Last updated: {formattedDate} {/* FIX: Use updatedAt */}
+                  Last updated: {formattedDate} 
                 </p>
               </div>
             );
           })}
         </div>
-      )}
+      )})()}
     </div>
   );
 }

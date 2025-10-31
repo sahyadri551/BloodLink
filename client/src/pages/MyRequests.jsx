@@ -49,7 +49,7 @@ function MyRequests() {
       await updateDoc(doc(db, "bloodRequests", id), { status: "fulfilled" });
       alert("Request marked as fulfilled!");
     } catch (err) {
-      console.error("❌ Error updating request:", err);
+      console.error("Error updating request:", err);
       alert("Failed to update request.");
     }
   };
@@ -126,8 +126,6 @@ function MyRequests() {
               >
                 Status: {req.status || "active"}
               </p>
-
-              {/* Action Buttons */}
               <div className="flex justify-between items-center mt-4">
                 {req.status !== "fulfilled" && (
                   <button

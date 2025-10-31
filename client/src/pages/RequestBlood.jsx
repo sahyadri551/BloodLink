@@ -72,7 +72,6 @@ function RequestBlood() {
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Name */}
         <div>
           <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Full Name</label>
           <input
@@ -86,8 +85,6 @@ function RequestBlood() {
             required
           />
         </div>
-
-        {/* Location */}
         <div>
           <label htmlFor="location" className="block text-gray-700 font-medium mb-2">Location</label>
           <input
@@ -101,8 +98,6 @@ function RequestBlood() {
             required
           />
         </div>
-
-        {/* Blood Type */}
         <div>
           <label htmlFor="BloodType" className="block text-gray-700 font-medium mb-2">Blood Type</label>
           <select
@@ -124,8 +119,6 @@ function RequestBlood() {
             <option value="O-">O-</option>
           </select>
         </div>
-
-        {/* Quantity */}
         <div>
           <label htmlFor="quantity" className="block text-gray-700 font-medium mb-2">Quantity (in units)</label>
           <input
@@ -140,8 +133,6 @@ function RequestBlood() {
             required
           />
         </div>
-
-        {/* Contact */}
         <div>
           <label htmlFor="contact" className="block text-gray-700 font-medium mb-2">Contact Number</label>
           <input
@@ -155,8 +146,6 @@ function RequestBlood() {
             required
           />
         </div>
-
-        {/* Reason */}
         <div>
           <label htmlFor="reason" className="block text-gray-700 font-medium mb-2">Reason / Notes</label>
           <textarea

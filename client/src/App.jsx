@@ -10,6 +10,10 @@ import ActiveRequests from './pages/ActiveRequests';
 import ForgotPassword from './pages/ForgetPassword';
 import MyRequests from './pages/MyRequests';
 import FindDonors from './pages/FindDoners';
+import AdminRoute from './components/AdminRoute'; 
+import AdminDashboard from './pages/AdminDashboard'; 
+import VerifiedHospitalRoute from './components/VerifiedHospitalRoute'; 
+import CreateCamp from './pages/CreateCamp';
 function App() {
   return (
     <div>
@@ -17,6 +21,22 @@ function App() {
       
       <main className="pt-16">
         <Routes>
+          <Route 
+            path="/admin-dashboard"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            } 
+          />
+          <Route
+            path="/create-camp"
+            element={
+              <VerifiedHospitalRoute>
+                <CreateCamp />
+              </VerifiedHospitalRoute>
+            }
+          />
           <Route 
             path="/profile" 
             element={
