@@ -2,21 +2,33 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // --- UPDATED RULES FOR 'users' ---
+    // ... /users rules ...
     match /users/{userId} {
-      // Any logged-in user can READ any user's profile (for the search page)
       allow read: if request.auth != null;
-
-      // A user can ONLY WRITE (update/create) their OWN profile
       allow write: if request.auth != null && request.auth.uid == userId;
     }
-    // --- END OF UPDATED RULES ---
 
-    // Rules for bloodRequests (already correct)
+    // ... /bloodRequests rules ...
     match /bloodRequests/{requestId} {
       allow read, create: if request.auth != null;
       allow update, delete: if request.auth != null && request.auth.uid == resource.data.uid;
     }
+    
+    // --- ADD THIS NEW BLOCK ---
+    match /bloodCamps/{campId} {
+      // Any logged-in user can read all camps
+      allow read: if request.auth != null;
+      
+      // Only a verified hospital can create a new camp
+      // We check their custom 'role' and 'isVerified' fields from their doc
+      allow create: if request.auth != null 
+                    && get(/databases/(database)/documents/users/$(request.auth.uid)).data.role == 'hospital'
+                    && get(/databases/(database)/documents/users/$(request.auth.uid)).data.isVerified == true;
+      
+      // Only the hospital that created the camp can update or delete it
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.hospitalId;
+    }
+    // --- END OF NEW BLOCK ---
 
   }
 }
