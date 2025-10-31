@@ -1,8 +1,10 @@
-import React from "react";
+import React, { Fragment } from "react"; // <-- Import Fragment
 import { Link, useNavigate, NavLink } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { useAuth } from "../contexts/AuthContext";
+// 1. Import the Menu components from Headless UI
+import { Menu, MenuButton, MenuItems, MenuItem, Transition } from "@headlessui/react";
 
 function Navbar() {
   const { currentUser } = useAuth();
@@ -28,6 +30,7 @@ function Navbar() {
         <div className="flex items-center space-x-6">
           {currentUser ? (
             <>
+              {/* These links stay visible */}
               <NavLink
                 to="/active-requests"
                 className={({ isActive }) =>
@@ -44,26 +47,81 @@ function Navbar() {
               >
                 Request Blood
               </NavLink>
-              <NavLink
-                to="/my-requests"
-                className={({ isActive }) =>
-                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
-                }
-              >
-                My Requests
-              </NavLink>
-              <span className="text-gray-700 text-sm">
-                Logged in as <strong>{currentUser.email}</strong>
-              </span>
-              <button
-                onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
-              >
-                Logout
-              </button>
+
+              {/* 2. This is the new Dropdown Menu */}
+              <Menu as="div" className="relative inline-block text-left">
+                {/* The ... (kebab) button that triggers the dropdown */}
+                <MenuButton className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+                  {/* You can use an icon here, but for simplicity, we use text */}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm0 6a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm0 6a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                  </svg>
+                </MenuButton>
+
+                {/* 3. The Dropdown Panel */}
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <MenuItems className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="py-1">
+                      {/* 4. Dropdown Items */}
+                      <div className="px-4 py-2 text-sm text-gray-500 border-b">
+                        Logged in as<br/>
+                        <strong className="text-gray-700">{currentUser.email}</strong>
+                      </div>
+                      
+                      <MenuItem>
+                        {({ active }) => (
+                          <NavLink
+                            to="/profile"
+                            className={`${
+                              active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                            } block px-4 py-2 text-sm`}
+                          >
+                            My Profile
+                          </NavLink>
+                        )}
+                      </MenuItem>
+                      
+                      <MenuItem>
+                        {({ active }) => (
+                          <NavLink
+                            to="/my-requests"
+                            className={`${
+                              active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                            } block px-4 py-2 text-sm`}
+                          >
+                            My Requests
+                          </NavLink>
+                        )}
+                      </MenuItem>
+
+                      <MenuItem>
+                        {({ active }) => (
+                          <button
+                            onClick={handleLogout}
+                            className={`${
+                              active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                            } block w-full text-left px-4 py-2 text-sm`}
+                          >
+                            Logout
+                          </button>
+                        )}
+                      </MenuItem>
+                    </div>
+                  </MenuItems>
+                </Transition>
+              </Menu>
             </>
           ) : (
             <>
+              {/* This is the logged-out state (unchanged) */}
               <NavLink
                 to="/active-requests"
                 className={({ isActive }) =>
@@ -86,7 +144,7 @@ function Navbar() {
                 to="/register"
                 className={({ isActive }) =>
                     isActive
-                    ? "bg-blue-800 text-white px-4 py-2 rounded-md transition" // "Highlighted" style
+                    ? "bg-blue-800 text-white px-4 py-2 rounded-md transition"
                     : " border border-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 transition"
                 }
                 >
