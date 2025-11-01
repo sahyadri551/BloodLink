@@ -2,33 +2,39 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ... /users rules ...
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
+    // USERS COLLECTION
+    match /users/{uid} {
+      allow read: if true; // public can view minimal info
+      allow create: if request.auth != null; // anyone logged in can register themselves
+      allow update, delete: if request.auth.uid == uid // user can modify only their own doc
+        || request.auth.token.role == "admin"; // admins can verify hospitals
     }
 
-    // ... /bloodRequests rules ...
-    match /bloodRequests/{requestId} {
-      allow read, create: if request.auth != null;
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.uid;
+    // VERIFIED HOSPITALS COLLECTION
+    match /verifiedHospitals/{docId} {
+      allow read: if true; // public can see verified hospitals
+      allow write: if request.auth != null && request.auth.token.role == "admin";
     }
-    
-    // --- ADD THIS NEW BLOCK ---
+
+    // BLOOD CAMPS COLLECTION
     match /bloodCamps/{campId} {
-      // Any logged-in user can read all camps
-      allow read: if request.auth != null;
-      
-      // Only a verified hospital can create a new camp
-      // We check their custom 'role' and 'isVerified' fields from their doc
-      allow create: if request.auth != null 
-                    && get(/databases/(database)/documents/users/$(request.auth.uid)).data.role == 'hospital'
-                    && get(/databases/(database)/documents/users/$(request.auth.uid)).data.isVerified == true;
-      
-      // Only the hospital that created the camp can update or delete it
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.hospitalId;
+      allow read: if true; // public visibility
+      allow create: if request.auth != null; // must be logged in (hospital)
+      allow update, delete: if request.auth.uid == resource.data.hospitalId
+        || request.auth.token.role == "admin";
     }
-    // --- END OF NEW BLOCK ---
 
+    // BLOOD REQUESTS COLLECTION
+    match /bloodRequests/{reqId} {
+      allow read: if true; // public can see active requests
+      allow create: if request.auth != null; // only logged in can post
+      allow update, delete: if request.auth.uid == resource.data.uid
+        || request.auth.token.role == "admin";
+    }
+
+    // Default deny all others
+    match /{document=**} {
+      allow read, write: if false;
+    }
   }
 }

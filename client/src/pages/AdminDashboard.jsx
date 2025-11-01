@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/config';
-import { collection, query, where, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { 
+  collection, 
+  query, 
+  where, 
+  onSnapshot, 
+  doc, 
+  writeBatch, // 1. Import writeBatch
+  serverTimestamp // 2. Import serverTimestamp
+} from 'firebase/firestore';
 
 function AdminDashboard() {
   const [unverifiedHospitals, setUnverifiedHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // This useEffect listens for unverified hospitals in real-time
   useEffect(() => {
-    // Query for users that are 'hospitals' AND 'isVerified' is false
     const q = query(
       collection(db, "users"),
       where("role", "==", "hospital"),
@@ -24,23 +30,31 @@ function AdminDashboard() {
       setLoading(false);
     }, (error) => {
       console.error("Error fetching unverified hospitals: ", error);
-      // This will likely be a "Missing Index" error.
       if (error.code === 'failed-precondition') {
         alert("This page requires a new database index. Please open the console (F12) and click the link in the error message to create it.");
       }
       setLoading(false);
     });
 
-    return () => unsubscribe(); // Cleanup the listener on unmount
+    return () => unsubscribe();
   }, []);
 
-  // This function runs when the admin clicks "Approve"
+  // 3. This function is now updated to use a batched write
   const approveHospital = async (id) => {
-    const docRef = doc(db, "users", id);
+    const batch = writeBatch(db);
+    
+    // Doc 1: The user's document
+    const userDocRef = doc(db, "users", id);
+    batch.update(userDocRef, { isVerified: true });
+
+    // Doc 2: The new entry in the 'verifiedHospitals' collection
+    // This document ID will be the hospital's UID
+    const hospitalDocRef = doc(db, "verifiedHospitals", id);
+    batch.set(hospitalDocRef, { isVerified: true, approvedAt: serverTimestamp() });
+
     try {
-      await updateDoc(docRef, {
-        isVerified: true
-      });
+      // 4. Commit both changes at once
+      await batch.commit();
       alert("Hospital approved successfully!");
     } catch (err) {
       console.error("Error approving hospital: ", err);
@@ -62,23 +76,24 @@ function AdminDashboard() {
             return <p className="text-gray-500">No hospitals are currently awaiting approval.</p>;
           }
           return (
-          <div className="space-y-4">
-            {unverifiedHospitals.map((hospital) => (
-              <div key={hospital.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <p className="font-semibold text-gray-800">{hospital.username}</p>
-                  <p className="text-sm text-gray-500">{hospital.email}</p>
+            <div className="space-y-4">
+              {unverifiedHospitals.map((hospital) => (
+                <div key={hospital.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <p className="font-semibold text-gray-800">{hospital.username}</p>
+                    <p className="text-sm text-gray-500">{hospital.email}</p>
+                  </div>
+                  <button
+                    onClick={() => approveHospital(hospital.id)}
+                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+                  >
+                    Approve
+                  </button>
                 </div>
-                <button
-                  onClick={() => approveHospital(hospital.id)}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
-                >
-                  Approve
-                </button>
-              </div>
-            ))}
-          </div>
-        )})()}
+              ))}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

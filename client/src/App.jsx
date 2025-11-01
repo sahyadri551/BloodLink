@@ -14,6 +14,8 @@ import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './pages/AdminDashboard'; 
 import VerifiedHospitalRoute from './components/VerifiedHospitalRoute'; 
 import CreateCamp from './pages/CreateCamp';
+import AllCamps from './pages/AllCamps';
+import EligibilityChecker from './pages/EligibilityChecker';
 function App() {
   return (
     <div>
@@ -58,9 +60,11 @@ function App() {
             element={<ProtectedRoute><MyRequests /></ProtectedRoute>} 
           />
           <Route path="/active-requests" element={<ActiveRequests />} />
+          <Route path="/camps" element={<AllCamps />} />
           <Route path="/find-donors" element={<FindDonors />} />
           <Route path="/" element={<h1>Welcome Home! (You are logged in)</h1>} />
           <Route path="/login" element={<Login />} />
+          <Route path="/eligibility-check" element={<EligibilityChecker />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>

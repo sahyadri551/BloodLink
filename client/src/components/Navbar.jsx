@@ -30,20 +30,28 @@ function Navbar() {
           {currentUser ? (
             <>
               <NavLink
-                to="/active-requests"
-                className={({ isActive }) =>
-                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
-                }
-              >
-                Active Requests
-              </NavLink>
-              <NavLink
                 to="/find-donors"
                 className={({ isActive }) =>
                   isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
                 }
               >
                 Find Donors
+              </NavLink>
+              <NavLink
+                to="/camps"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
+                }
+              >
+                Blood Camps
+              </NavLink>
+              <NavLink
+                to="/active-requests"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
+                }
+              >
+                Active Requests
               </NavLink>
               <NavLink
                 to="/request-blood"
@@ -154,6 +162,30 @@ function Navbar() {
                 }
               >
                 Active Requests
+              </NavLink>
+              <NavLink
+                to="/find-donors"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
+                }
+              >
+                Find Donors
+              </NavLink>
+              <NavLink
+                to="/camps"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
+                }
+              >
+                Blood Camps
+              </NavLink>
+              <NavLink
+                to="/eligibility-check"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
+                }
+              >
+                Check Eligibility
               </NavLink>
               <NavLink
                 to="/login"
