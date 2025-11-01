@@ -1,13 +1,14 @@
 const admin = require("firebase-admin");
 const fs = require("node:fs");
 
+dotenv.config(); 
+
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 admin.initializeApp({
-  credential: admin.credential.cert(
-    JSON.parse(fs.readFileSync("./serviceAccountKey.json", "utf8"))
-  ),
+  credential: admin.credential.cert(serviceAccount),
 });
 
-const uid = "YOUR_ADMIN_USER_UID";
+const uid = "YOUR_ADMIN_UID_HERE";
 
 try {
   await admin.auth().setCustomUserClaims(uid, { role: "admin" });
@@ -16,5 +17,3 @@ try {
   console.error("Error setting admin role:", err);
   process.exit(1);
 }
-
-process.exit(0);
