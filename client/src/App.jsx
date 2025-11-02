@@ -22,6 +22,7 @@ import WritePost from './pages/WritePost';
 import Blog from './pages/Blog';
 import Post from './pages/Post';
 import MyAccount from './pages/MyAccount';
+import Home from './pages/Home';
 
 function App() {
   return (
@@ -85,7 +86,7 @@ function App() {
           <Route path="/active-requests" element={<ActiveRequests />} />
           <Route path="/camps" element={<AllCamps />} />
           <Route path="/find-donors" element={<FindDonors />} />
-          <Route path="/" element={<h1>Welcome Home! (You are logged in)</h1>} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/eligibility-check" element={<EligibilityChecker />} />
           <Route path="/register" element={<Register />} />
