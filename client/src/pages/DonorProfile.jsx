@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import {  db, storage } from '../firebase/config';
+import { db, storage } from '../firebase/config';
 import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { useAuth } from '../contexts/AuthContext'; 
+import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-function Profile() {
-  const { currentUser } = useAuth(); 
+function DonorProfile() {
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
+
   const [profileData, setProfileData] = useState({
     name: '',
     gender: '',
@@ -21,10 +22,13 @@ function Profile() {
     lastDonationDate: '',
     availability: 'available',
     bio: '',
-    profilePicture: null, 
-    profilePictureURL: '', 
+    profilePicture: null,
+    profilePictureURL: '',
+    badges: [],
+    donationCount: 0,
   });
 
+  // Load existing profile data from context
   useEffect(() => {
     if (currentUser) {
       setProfileData({
@@ -32,7 +36,7 @@ function Profile() {
         gender: currentUser.gender || '',
         dateOfBirth: currentUser.dateOfBirth || '',
         bloodType: currentUser.bloodType || '',
-        email: currentUser.email || '', 
+        email: currentUser.email || '',
         phone: currentUser.phone || '',
         location: currentUser.location || '',
         emergencyContact: currentUser.emergencyContact || '',
@@ -40,64 +44,54 @@ function Profile() {
         availability: currentUser.availability || 'available',
         bio: currentUser.bio || '',
         profilePictureURL: currentUser.profilePictureURL || null,
+        badges: currentUser.badges || [],
+        donationCount: currentUser.donationCount || 0,
         profilePicture: null,
       });
     }
   }, [currentUser]);
 
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfileData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setProfileData((prev) => ({
-      ...prev,
-      profilePicture: file,
-    }));
+    setProfileData((prev) => ({ ...prev, profilePicture: file }));
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!currentUser) {
-      alert('You must be logged in to save your profile.');
-      return;
-    }
+    if (!currentUser) return;
     setLoading(true);
+
     try {
       let photoURL = null;
-
       if (profileData.profilePicture && (profileData.profilePicture instanceof File)) {
-        const imageRef = ref(
-          storage,
-          `profilePictures/${currentUser.uid}/${profileData.profilePicture.name}`
-        );
+        const imageRef = ref(storage, `profilePictures/${currentUser.uid}/${profileData.profilePicture.name}`);
         await uploadBytes(imageRef, profileData.profilePicture);
         photoURL = await getDownloadURL(imageRef);
       }
 
-      const { profilePicture, ...restOfProfileData } = profileData;
+      const { profilePicture, ...restOfData } = profileData;
+      // Ensure location is saved as lowercase for searching
       const dataToSave = {
-        ...restOfProfileData,
+        ...restOfData,
+        location: profileData.location.toLowerCase().trim(), // Standardize location
         profilePictureURL: photoURL || profileData.profilePictureURL || null,
         uid: currentUser.uid,
-        email: profileData.email, 
+        email: profileData.email,
+        role: currentUser.role,
         updatedAt: new Date().toISOString(),
       };
 
       await setDoc(doc(db, 'users', currentUser.uid), dataToSave, { merge: true });
-
-      alert('Profile saved successfully!');
+      alert('✅ Profile saved successfully!');
       navigate('/');
     } catch (error) {
       console.error(' Error saving profile:', error);
-      alert('Failed to save profile. Check console for details.');
+      alert('Failed to save profile.');
     } finally {
       setLoading(false);
     }
@@ -105,10 +99,37 @@ function Profile() {
 
   return (
     <div className="max-w-3xl mx-auto mt-12 bg-white shadow-md rounded-xl p-8">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-        Edit Your Profile
+      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
+        My Donor Profile
       </h1>
+
+      {/* --- BADGES SECTION --- */}
+      <div className="mb-8 p-4 bg-gray-50 rounded-lg border">
+        <h2 className="text-xl font-semibold text-gray-700 mb-3">My Badges ({profileData.donationCount} Donations)</h2>
+        {profileData.badges && profileData.badges.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            
+            {/* --- FIX 2: Use badge string as key --- */}
+            {profileData.badges.map((badge) => (
+              <span key={badge} className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+                {badge === "First Time Hero" ? "🏆 " : ""}
+                {badge === "Bronze Donor" ? "🥉 " : ""}
+                {badge === "Silver Donor" ? "🥈 " : ""}
+                {badge}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-sm">You have no badges yet. Confirm a donation to get started!</p>
+        )}
+      </div>
+      {/* --- END BADGES SECTION --- */}
+
+
+      {/* --- DONOR PROFILE FORM --- */}
       <form onSubmit={handleSubmit} className="space-y-6">
+        
+        {/* --- FIX 1: Added File Input JSX --- */}
         <div className="flex flex-col items-center">
           <label htmlFor="profilePicture" className="text-gray-700 font-medium mb-2">
             Profile Picture
@@ -143,8 +164,10 @@ function Profile() {
             )
             }
         </div>
+        {/* --- END FIX 1 --- */}
 
-
+        {/* Form fields (Name, Gender, Blood Type, etc.) */}
+        {/* Name */}
         <div>
           <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
             Full Name
@@ -156,11 +179,12 @@ function Profile() {
             value={profileData.name}
             onChange={handleChange}
             placeholder="Enter your full name"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           />
         </div>
 
+        {/* Gender */}
         <div>
           <label htmlFor="gender" className="block text-gray-700 font-medium mb-2">
             Gender
@@ -170,7 +194,7 @@ function Profile() {
             name="gender"
             value={profileData.gender}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           >
             <option value="">Select Gender</option>
@@ -180,6 +204,7 @@ function Profile() {
           </select>
         </div>
 
+        {/* Date of Birth */}
         <div>
           <label htmlFor="dateOfBirth" className="block text-gray-700 font-medium mb-2">
             Date of Birth
@@ -190,11 +215,12 @@ function Profile() {
             type="date"
             value={profileData.dateOfBirth}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           />
         </div>
 
+        {/* Blood Type */}
         <div>
           <label htmlFor="bloodType" className="block text-gray-700 font-medium mb-2">
             Blood Type
@@ -204,7 +230,7 @@ function Profile() {
             name="bloodType"
             value={profileData.bloodType}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           >
             <option value="">Select your blood type</option>
@@ -231,7 +257,7 @@ function Profile() {
             value={profileData.email}
             onChange={handleChange}
             placeholder="Enter your email address"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           />
         </div>
@@ -248,14 +274,15 @@ function Profile() {
             value={profileData.phone}
             onChange={handleChange}
             placeholder="Enter your phone number"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           />
         </div>
 
+        {/* Location */}
         <div>
           <label htmlFor="location" className="block text-gray-700 font-medium mb-2">
-            Location
+            Location (City / Region)
           </label>
           <input
             id="location"
@@ -264,11 +291,12 @@ function Profile() {
             value={profileData.location}
             onChange={handleChange}
             placeholder="Enter your city, district, or region"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           />
         </div>
 
+        {/* Emergency Contact */}
         <div>
           <label htmlFor="emergencyContact" className="block text-gray-700 font-medium mb-2">
             Emergency Contact
@@ -280,11 +308,12 @@ function Profile() {
             value={profileData.emergencyContact}
             onChange={handleChange}
             placeholder="Enter emergency contact name & number"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           />
         </div>
 
+        {/* Last Donation Date */}
         <div>
           <label htmlFor="lastDonationDate" className="block text-gray-700 font-medium mb-2">
             Last Donation Date
@@ -295,11 +324,12 @@ function Profile() {
             type="date"
             value={profileData.lastDonationDate}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           />
         </div>
 
+        {/* Availability */}
         <div>
           <label htmlFor="availability" className="block text-gray-700 font-medium mb-2">
             Availability Status
@@ -309,7 +339,7 @@ function Profile() {
             name="availability"
             value={profileData.availability}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           >
             <option value="available">Available</option>
@@ -317,6 +347,7 @@ function Profile() {
           </select>
         </div>
 
+        {/* Bio */}
         <div>
           <label htmlFor="bio" className="block text-gray-700 font-medium mb-2">
             Bio / Description
@@ -328,16 +359,17 @@ function Profile() {
             value={profileData.bio}
             onChange={handleChange}
             placeholder="Write a short description about yourself or your donor experience"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           ></textarea>
         </div>
 
+        {/* Save Button */}
         <div className="text-center pt-4">
           <button
             type="submit"
             disabled={loading}
-            className={`${
+            className={`w-full ${
               loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
             } text-white px-6 py-2 rounded-md transition duration-200`}
           >
@@ -349,4 +381,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default DonorProfile;

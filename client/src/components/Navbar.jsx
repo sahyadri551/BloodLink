@@ -22,7 +22,7 @@ function Navbar() {
 
   return (
     <nav className="bg-white shadow-md fixed w-full top-0 left-0 z-50">
-      <div className="max-w-6xl mx-auto px-6 py-3 flex justify-between items-center">
+      <div className="max-w-full mx-2 px-1 py-3 flex justify-between items-center">
         <Link to="/" className="text-xl font-bold text-blue-600 hover:text-blue-800">
           BloodLink
         </Link>
@@ -82,6 +82,20 @@ function Navbar() {
                         Logged in as<br/>
                         <strong className="text-gray-700">{currentUser.email}</strong>
                       </div>
+                      {(currentUser.role === 'admin' || (currentUser.role === 'hospital' && currentUser.isVerified)) && (
+                        <MenuItem>
+                          {({ active }) => (
+                            <NavLink
+                              to="/confirm-donation"
+                              className={`${
+                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                              } block px-4 py-2 text-sm font-semibold text-green-600`} // Styled to stand out
+                            >
+                              Confirm Donation
+                            </NavLink>
+                          )}
+                        </MenuItem>
+                      )}
                       {currentUser.role === 'admin' && (
                         <MenuItem>
                           {({ active }) => (

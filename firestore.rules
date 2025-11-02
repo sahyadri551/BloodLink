@@ -36,5 +36,22 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+
+    // DONATIONS COLLECTION
+    match /donations/{donationId} {
+      // Allow create IF the user is an admin OR a verified hospital
+      allow create: if request.auth != null &&
+                      (exists(/databases/(database)/documents/admins/$(request.auth.uid)) ||
+                       exists(/databases/(database)/documents/verifiedHospitals/$(request.auth.uid)));
+
+      // Allow read IF you are the donor who made the donation
+      // OR the hospital/admin who confirmed it.
+      allow read: if request.auth != null &&
+                  (request.auth.uid == resource.data.donorId ||
+                   request.auth.uid == resource.data.hospitalId);
+
+      // No one can update or delete
+      allow update, delete: if false;
+    }
   }
 }

@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
-import Profile from './pages/Profile'
+import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute'
 import RequestBlood from './pages/RequestBlood';
 import ActiveRequests from './pages/ActiveRequests';
@@ -16,6 +16,9 @@ import VerifiedHospitalRoute from './components/VerifiedHospitalRoute';
 import CreateCamp from './pages/CreateCamp';
 import AllCamps from './pages/AllCamps';
 import EligibilityChecker from './pages/EligibilityChecker';
+import HospitalOrAdminRoute from './components/HospitalOrAdminRoute';
+import ConfirmDonation from './pages/ConfirmDonation';
+
 function App() {
   return (
     <div>
@@ -39,11 +42,19 @@ function App() {
               </VerifiedHospitalRoute>
             }
           />
+          <Route
+            path="/confirm-donation"
+            element={
+              <HospitalOrAdminRoute>
+                <ConfirmDonation />
+              </HospitalOrAdminRoute>
+            }
+          />
           <Route 
             path="/profile" 
             element={
               <ProtectedRoute>
-                <Profile />
+                <ProfilePage />
               </ProtectedRoute>
             } 
           />

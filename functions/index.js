@@ -1,32 +1,51 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+admin.initializeApp();
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+const db = admin.firestore();
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+exports.onDonationCreated = functions.firestore
+    .document("donations/{donationId}")
+    .onCreate(async (snap, context) => {
+      const donation = snap.data();
+      const donorId = donation.donorId;
+
+      if (!donorId) {
+        console.error("Donation document is missing a donorId.");
+        return null;
+      }
+
+      const userDocRef = db.collection("users").doc(donorId);
+
+      try {
+        const userDoc = await userDocRef.get();
+        if (!userDoc.exists) {
+          console.error(`User document ${donorId} not found.`);
+          return null;
+        }
+
+        const userData = userDoc.data();
+
+        const newCount = (userData.donationCount || 0) + 1;
+        const currentBadges = userData.badges || [];
+
+        if (newCount === 1 && !currentBadges.includes("First Time Hero")) {
+          currentBadges.push("First Time Hero");
+        }
+        if (newCount === 3 && !currentBadges.includes("Bronze Donor")) {
+          currentBadges.push("Bronze Donor");
+        }
+        if (newCount === 10 && !currentBadges.includes("Silver Donor")) {
+          currentBadges.push("Silver Donor");
+        }
+        return userDocRef.update({
+          donationCount: admin.firestore.FieldValue.increment(1),
+          badges: currentBadges,
+        });
+      } catch (error) {
+        console.error("Error updating user for badges: ", error);
+        return null;
+      }
+    });
