@@ -18,6 +18,10 @@ import AllCamps from './pages/AllCamps';
 import EligibilityChecker from './pages/EligibilityChecker';
 import HospitalOrAdminRoute from './components/HospitalOrAdminRoute';
 import ConfirmDonation from './pages/ConfirmDonation';
+import WritePost from './pages/WritePost';
+import Blog from './pages/Blog';
+import Post from './pages/Post';
+import MyAccount from './pages/MyAccount';
 
 function App() {
   return (
@@ -33,6 +37,10 @@ function App() {
                 <AdminDashboard />
               </AdminRoute>
             } 
+          />
+          <Route 
+            path="/write-post"
+            element={<AdminRoute><WritePost /></AdminRoute>} 
           />
           <Route
             path="/create-camp"
@@ -59,7 +67,11 @@ function App() {
             } 
           />
           <Route 
-            path="/request-blood"  // <-- NEW PROTECTED ROUTE
+            path="/my-account"
+            element={<ProtectedRoute><MyAccount /></ProtectedRoute>} 
+          />
+          <Route 
+            path="/request-blood" 
             element={
               <ProtectedRoute>
                 <RequestBlood />
@@ -67,7 +79,7 @@ function App() {
             } 
           />
           <Route 
-            path="/my-requests" // <-- 2. Add this new route
+            path="/my-requests" 
             element={<ProtectedRoute><MyRequests /></ProtectedRoute>} 
           />
           <Route path="/active-requests" element={<ActiveRequests />} />
@@ -78,6 +90,8 @@ function App() {
           <Route path="/eligibility-check" element={<EligibilityChecker />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:postId" element={<Post />} />
         </Routes>
       </main>
       

@@ -38,6 +38,14 @@ function Navbar() {
                 Find Donors
               </NavLink>
               <NavLink
+                to="/blog"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
+                }
+              >
+                Blog
+              </NavLink>
+              <NavLink
                 to="/camps"
                 className={({ isActive }) =>
                   isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
@@ -97,18 +105,32 @@ function Navbar() {
                         </MenuItem>
                       )}
                       {currentUser.role === 'admin' && (
-                        <MenuItem>
-                          {({ active }) => (
-                            <NavLink
-                              to="/admin-dashboard"
-                              className={`${
-                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
-                              } block px-4 py-2 text-sm font-bold text-red-600`} // Styled to stand out
-                            >
-                              Admin Dashboard
-                            </NavLink>
-                          )}
-                        </MenuItem>
+                        <>
+                          <MenuItem>
+                            {({ active }) => (
+                              <NavLink
+                                to="/admin-dashboard"
+                                className={`${
+                                  active ? 'bg-gray-100' : 'text-gray-700'
+                                } block px-4 py-2 text-sm font-bold text-red-600`}
+                              >
+                                Admin Dashboard
+                              </NavLink>
+                            )}
+                          </MenuItem>
+                          <MenuItem>
+                            {({ active }) => (
+                              <NavLink
+                                to="/write-post"
+                                className={`${
+                                  active ? 'bg-gray-100' : 'text-gray-700'
+                                } block px-4 py-2 text-sm font-bold text-red-600`}
+                              >
+                                Write New Post
+                              </NavLink>
+                            )}
+                          </MenuItem>
+                        </>
                       )}
                       {currentUser.role === 'hospital' && currentUser.isVerified === true && (
                         <MenuItem>
@@ -149,8 +171,19 @@ function Navbar() {
                           </NavLink>
                         )}
                       </MenuItem>
-
                       <MenuItem>
+                          {({ active }) => (
+                            <NavLink
+                              to="/my-account"
+                              className={`${
+                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                              } block px-4 py-2 text-sm border-t border-gray-100`}
+                            >
+                              My Account
+                            </NavLink>
+                          )}
+                        </MenuItem>
+                        <MenuItem>
                         {({ active }) => (
                           <button
                             onClick={handleLogout}
@@ -200,6 +233,14 @@ function Navbar() {
                 }
               >
                 Check Eligibility
+              </NavLink>
+              <NavLink
+                to="/blog"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
+                }
+              >
+                Blog
               </NavLink>
               <NavLink
                 to="/login"

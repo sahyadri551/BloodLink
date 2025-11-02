@@ -2,56 +2,68 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // USERS COLLECTION
-    match /users/{uid} {
-      allow read: if true; // public can view minimal info
-      allow create: if request.auth != null; // anyone logged in can register themselves
-      allow update, delete: if request.auth.uid == uid // user can modify only their own doc
-        || request.auth.token.role == "admin"; // admins can verify hospitals
+    // --- RULES FOR 'users' ---
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // Allow update IF:
+      // 1. You are the owner
+      // OR
+      // 2. Your UID exists as a document in the 'admins' collection
+      allow update: if request.auth != null && 
+                      (request.auth.uid == userId ||
+                       exists(/databases/(database)/documents/admins/$(request.auth.uid)));
+
+      allow delete: if request.auth != null && request.auth.uid == userId;
     }
 
-    // VERIFIED HOSPITALS COLLECTION
-    match /verifiedHospitals/{docId} {
-      allow read: if true; // public can see verified hospitals
-      allow write: if request.auth != null && request.auth.token.role == "admin";
+    // --- LOCK DOWN THE 'admins' COLLECTION ---
+    match /admins/{adminId} {
+      // Nobody can read or write this from the client
+      allow read, write: if false; 
     }
 
-    // BLOOD CAMPS COLLECTION
-    match /bloodCamps/{campId} {
-      allow read: if true; // public visibility
-      allow create: if request.auth != null; // must be logged in (hospital)
-      allow update, delete: if request.auth.uid == resource.data.hospitalId
-        || request.auth.token.role == "admin";
-    }
-
-    // BLOOD REQUESTS COLLECTION
-    match /bloodRequests/{reqId} {
-      allow read: if true; // public can see active requests
-      allow create: if request.auth != null; // only logged in can post
-      allow update, delete: if request.auth.uid == resource.data.uid
-        || request.auth.token.role == "admin";
-    }
-
-    // Default deny all others
-    match /{document=**} {
-      allow read, write: if false;
-    }
-
-    // DONATIONS COLLECTION
-    match /donations/{donationId} {
-      // Allow create IF the user is an admin OR a verified hospital
+    // --- RULES FOR 'verifiedHospitals' ---
+    match /verifiedHospitals/{hospitalId} {
+      // Allow create IF the user is an admin
       allow create: if request.auth != null &&
-                      (exists(/databases/(database)/documents/admins/$(request.auth.uid)) ||
-                       exists(/databases/(database)/documents/verifiedHospitals/$(request.auth.uid)));
+                      exists(/databases/(database)/documents/admins/$(request.auth.uid));
 
-      // Allow read IF you are the donor who made the donation
-      // OR the hospital/admin who confirmed it.
-      allow read: if request.auth != null &&
-                  (request.auth.uid == resource.data.donorId ||
-                   request.auth.uid == resource.data.hospitalId);
-
-      // No one can update or delete
-      allow update, delete: if false;
+      allow read, update, delete: if false;
     }
+
+    // --- 'bloodRequests' ---
+    match /bloodRequests/{requestId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.uid;
+    }
+
+    // --- 'bloodCamps' ---
+    match /bloodCamps/{campId} {
+      allow read: if true;
+
+      // Check the 'verifiedHospitals' collection
+      allow create: if request.auth != null 
+                    && exists(/databases/(database)/documents/verifiedHospitals/$(request.auth.uid));
+
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.hospitalId;
+    }
+
+    // --- THIS IS THE NEW FIX for 'blogPosts' ---
+    match /blogPosts/{postId} {
+      // ANYONE (logged in or out) can READ blog posts
+      allow read: if true;
+
+      // Only an ADMIN (whose UID exists in 'admins') can CREATE
+      allow create: if request.auth != null &&
+                      exists(/databases/(database)/documents/admins/$(request.auth.uid));
+
+      // Only an ADMIN can UPDATE or DELETE
+      allow update, delete: if request.auth != null &&
+                             exists(/databases/(database)/documents/admins/$(request.auth.uid));
+    }
+
   }
 }
