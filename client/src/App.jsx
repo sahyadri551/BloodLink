@@ -9,12 +9,10 @@ import RequestBlood from './pages/RequestBlood';
 import ActiveRequests from './pages/ActiveRequests';
 import ForgotPassword from './pages/ForgetPassword';
 import MyRequests from './pages/MyRequests';
-import FindDonors from './pages/FindDoners';
 import AdminRoute from './components/AdminRoute'; 
 import AdminDashboard from './pages/AdminDashboard'; 
 import VerifiedHospitalRoute from './components/VerifiedHospitalRoute'; 
 import CreateCamp from './pages/CreateCamp';
-import AllCamps from './pages/AllCamps';
 import EligibilityChecker from './pages/EligibilityChecker';
 import HospitalOrAdminRoute from './components/HospitalOrAdminRoute';
 import ConfirmDonation from './pages/ConfirmDonation';
@@ -23,13 +21,17 @@ import Blog from './pages/Blog';
 import Post from './pages/Post';
 import MyAccount from './pages/MyAccount';
 import Home from './pages/Home';
+import FindDonation from './pages/FindDonation';
+import MyBookings from './pages/MyBookings';
+import HospitalBookings from './pages/HospitalBookings';
+import Footer from './components/Footer';
 
 function App() {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="pt-16">
+      <main className="pt-16 grow">
         <Routes>
           <Route 
             path="/admin-dashboard"
@@ -50,6 +52,14 @@ function App() {
                 <CreateCamp />
               </VerifiedHospitalRoute>
             }
+          />
+          <Route
+            path="/hospital-bookings"
+            element={<VerifiedHospitalRoute><HospitalBookings /></VerifiedHospitalRoute>}
+          />
+          <Route 
+            path="/my-bookings"
+            element={<ProtectedRoute><MyBookings /></ProtectedRoute>} 
           />
           <Route
             path="/confirm-donation"
@@ -84,8 +94,6 @@ function App() {
             element={<ProtectedRoute><MyRequests /></ProtectedRoute>} 
           />
           <Route path="/active-requests" element={<ActiveRequests />} />
-          <Route path="/camps" element={<AllCamps />} />
-          <Route path="/find-donors" element={<FindDonors />} />
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/eligibility-check" element={<EligibilityChecker />} />
@@ -93,9 +101,10 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:postId" element={<Post />} />
+          <Route path="/find-donation" element={<FindDonation />} />
         </Routes>
       </main>
-      
+      <Footer />
     </div>
   )
 }

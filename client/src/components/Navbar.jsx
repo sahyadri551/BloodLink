@@ -30,14 +30,6 @@ function Navbar() {
           {currentUser ? (
             <>
               <NavLink
-                to="/find-donors"
-                className={({ isActive }) =>
-                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
-                }
-              >
-                Find Donors
-              </NavLink>
-              <NavLink
                 to="/blog"
                 className={({ isActive }) =>
                   isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
@@ -46,12 +38,12 @@ function Navbar() {
                 Blog
               </NavLink>
               <NavLink
-                to="/camps"
+                to="/find-donation"
                 className={({ isActive }) =>
                   isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
                 }
               >
-                Blood Camps
+                Find Donation
               </NavLink>
               <NavLink
                 to="/active-requests"
@@ -133,6 +125,7 @@ function Navbar() {
                         </>
                       )}
                       {currentUser.role === 'hospital' && currentUser.isVerified === true && (
+                        <>
                         <MenuItem>
                           {({ active }) => (
                             <NavLink
@@ -145,6 +138,19 @@ function Navbar() {
                             </NavLink>
                           )}
                         </MenuItem>
+                        <MenuItem>
+                          {({ active }) => (
+                            <NavLink
+                              to="/hospital-bookings"
+                              className={`${
+                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                              } block px-4 py-2 text-sm`}
+                            >
+                              Manage Bookings
+                            </NavLink>
+                          )}
+                        </MenuItem>
+                        </>
                       )}
                       <MenuItem>
                         {({ active }) => (
@@ -184,6 +190,18 @@ function Navbar() {
                           )}
                         </MenuItem>
                         <MenuItem>
+                          {({ active }) => (
+                            <NavLink
+                              to="/my-bookings"
+                              className={`${
+                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                              } block px-4 py-2 text-sm`}
+                            >
+                              My Appointments
+                            </NavLink>
+                          )}
+                        </MenuItem>
+                        <MenuItem>
                         {({ active }) => (
                           <button
                             onClick={handleLogout}
@@ -211,20 +229,12 @@ function Navbar() {
                 Active Requests
               </NavLink>
               <NavLink
-                to="/find-donors"
+                to="/find-donation"
                 className={({ isActive }) =>
                   isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
                 }
               >
-                Find Donors
-              </NavLink>
-              <NavLink
-                to="/camps"
-                className={({ isActive }) =>
-                  isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"
-                }
-              >
-                Blood Camps
+                Find Donation
               </NavLink>
               <NavLink
                 to="/eligibility-check"
