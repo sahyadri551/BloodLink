@@ -99,5 +99,22 @@ service cloud.firestore {
                       
       allow update, delete: if false; // No one can change a donation record
     }
+
+    // --- NEW 'stories' RULE ---
+    match /stories/{storyId} {
+      // Allow create IF the user is logged in
+      allow create: if request.auth != null;
+      
+      // Allow read IF:
+      // 1. The story's status is 'approved' (for the public)
+      // OR
+      // 2. The user is an admin (to review pending stories)
+      allow read: if resource.data.status == 'approved' ||
+                   (request.auth != null && exists(/databases/(database)/documents/admins/$(request.auth.uid)));
+
+      // Only an ADMIN can update (approve) or delete stories
+      allow update, delete: if request.auth != null &&
+                             exists(/databases/(database)/documents/admins/$(request.auth.uid));
+    }
   }
 }

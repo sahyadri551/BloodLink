@@ -30,6 +30,14 @@ function Navbar() {
           {currentUser ? (
             <>
               <NavLink
+                to="/stories"
+                className={({ isActive }) =>
+                  isActive ? "text-primary-600 font-bold" : "text-gray-700 hover:text-primary-600 font-medium"
+                }
+              >
+                Stories
+              </NavLink>
+              <NavLink
                 to="/donate"
                 className="bg-green-100 text-green-700 px-4 py-2 rounded-md hover:bg-green-200 transition font-medium"
               >
@@ -208,6 +216,30 @@ function Navbar() {
                           )}
                         </MenuItem>
                         <MenuItem>
+                          {({ active }) => (
+                            <NavLink
+                              to="/submit-story"
+                              className={`${
+                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                              } block px-4 py-2 text-sm`}
+                            >
+                              Share Your Story
+                            </NavLink>
+                          )}
+                        </MenuItem>
+                        <MenuItem>
+                        {({ active }) => (
+                          <NavLink
+                            to="/my-donations"
+                            className={`${
+                              active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                            } block px-4 py-2 text-sm`}
+                          >
+                            My Donations
+                          </NavLink>
+                        )}
+                      </MenuItem>
+                        <MenuItem>
                         {({ active }) => (
                           <button
                             onClick={handleLogout}
@@ -257,6 +289,14 @@ function Navbar() {
                 }
               >
                 Blog
+              </NavLink>
+              <NavLink
+                to="/stories"
+                className={({ isActive }) =>
+                  isActive ? "text-primary-600 font-bold" : "text-gray-700 hover:text-primary-600 font-medium"
+                }
+              >
+                Stories
               </NavLink>
               <NavLink
                 to="/login"

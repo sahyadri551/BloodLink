@@ -7,7 +7,7 @@ import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute'
 import RequestBlood from './pages/RequestBlood';
 import ActiveRequests from './pages/ActiveRequests';
-import ForgotPassword from './pages/ForgetPassword';
+import ForgotPassword from './pages/ForgotPassword';
 import MyRequests from './pages/MyRequests';
 import AdminRoute from './components/AdminRoute'; 
 import AdminDashboard from './pages/AdminDashboard'; 
@@ -26,6 +26,10 @@ import MyBookings from './pages/MyBookings';
 import HospitalBookings from './pages/HospitalBookings';
 import Footer from './components/Footer';
 import DonateMoney from './pages/DonateMoney';
+import MyDonations from './pages/MyDonations';
+import SubmitStory from './pages/SubmitStory'
+import Stories from './pages/Stories'; 
+import Story from './pages/Story';
 
 function App() {
   return (
@@ -61,6 +65,14 @@ function App() {
           <Route 
             path="/my-bookings"
             element={<ProtectedRoute><MyBookings /></ProtectedRoute>} 
+          />
+          <Route 
+            path="/my-donations"
+            element={<ProtectedRoute><MyDonations /></ProtectedRoute>} 
+          />
+          <Route 
+            path="/submit-story"
+            element={<ProtectedRoute><SubmitStory /></ProtectedRoute>} 
           />
           <Route 
             path="/donate"
@@ -107,6 +119,8 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:postId" element={<Post />} />
           <Route path="/find-donation" element={<FindDonation />} />
+          <Route path="/stories" element={<Stories />} />
+          <Route path="/story/:storyId" element={<Story />} />
         </Routes>
       </main>
       <Footer />
