@@ -115,9 +115,18 @@ function CampCard({ camp, onBook }) {
   });
   
   return (
-    <div className="bg-white shadow-md rounded-xl p-6 border border-blue-100">
+    <div className="bg-white shadow-lg rounded-xl p-6 border border-transparent hover:border-primary-300 transition-all duration-300">
+      <span className="px-3 py-1 text-xs font-semibold text-primary-800 bg-primary-100 rounded-full">
+        Special Event / Camp
+      </span>
+      <h2 className="text-2xl font-semibold text-gray-800 mt-3 mb-2">
+        {camp.campName}
+      </h2>
+      <p className="text-gray-600 mb-1"><strong>Date:</strong> {formattedDate}</p>
+      <p className="text-gray-600 mb-1"><strong>Location:</strong> {camp.location}</p>
+      <p className="text-gray-600 mb-3"><strong>Time:</strong> {camp.startTime} - {camp.endTime}</p>
       <button 
-        className="w-full bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+        className="w-full bg-primary-600 text-white px-6 py-2 rounded-md hover:bg-primary-700 transition"
         onClick={() => onBook(camp)}
       >
         Request Appointment
@@ -128,7 +137,15 @@ function CampCard({ camp, onBook }) {
 
 function HospitalCard({ hospital, onBook }) { 
   return (
-    <div className="bg-white shadow-md rounded-xl p-6 border border-gray-100">
+    <div className="bg-white shadow-lg rounded-xl p-6 border border-transparent hover:border-green-300 transition-all duration-300">
+      <span className="px-3 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
+        Hospital / Blood Bank
+      </span>
+      <h2 className="text-2xl font-semibold text-gray-800 mt-3 mb-2">
+        {hospital.name}
+      </h2>
+      <p className="text-gray-600 mb-1"><strong>Location:</strong> {hospital.location}</p>
+      <p className="text-gray-600 mb-3"><strong>Contact:</strong> {hospital.phone}</p>
       <button 
         className="w-full bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition"
         onClick={() => onBook(hospital)} 
@@ -144,6 +161,7 @@ function BookingModal({ isOpen, onClose, opportunity, user, navigate }) {
   const [requestedTime, setRequestedTime] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // This useEffect now also defines the formatted date for camps
   useEffect(() => {
     if (opportunity) {
       setRequestedDate(opportunity.type === 'camp' ? opportunity.date : '');
@@ -152,6 +170,16 @@ function BookingModal({ isOpen, onClose, opportunity, user, navigate }) {
   }, [opportunity]);
 
   if (!isOpen) return null;
+
+  // --- THIS IS THE FIX ---
+  // We define formattedDate here so the 'camp' view can use it
+  let formattedDate = 'N/A';
+  if (opportunity.type === 'camp') {
+    formattedDate = new Date(opportunity.date).toLocaleDateString(undefined, {
+      year: 'numeric', month: 'long', day: 'numeric',
+    });
+  }
+  // --- END OF FIX ---
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -162,11 +190,9 @@ function BookingModal({ isOpen, onClose, opportunity, user, navigate }) {
         userId: user.uid,
         userName: user.name || user.username,
         userEmail: user.email,
-        
         opportunityId: opportunity.id,
         opportunityName: opportunity.campName || opportunity.name,
         opportunityType: opportunity.type,
-        
         requestedDate: requestedDate,
         requestedTime: requestedTime,
         status: "pending",
@@ -197,7 +223,7 @@ function BookingModal({ isOpen, onClose, opportunity, user, navigate }) {
         <p className="text-gray-700 mb-2">
           You are requesting an appointment with:
         </p>
-        <p className="text-lg font-semibold text-blue-600 mb-6">
+        <p className="text-lg font-semibold text-primary-600 mb-6">
           {opportunity.campName || opportunity.name}
         </p>
 
@@ -231,6 +257,7 @@ function BookingModal({ isOpen, onClose, opportunity, user, navigate }) {
           ) : (
             <div>
               <p>Please confirm the details for this event:</p>
+              {/* This now correctly uses the 'formattedDate' variable */}
               <p><strong>Date:</strong> {formattedDate}</p>
               <p><strong>Time:</strong> {opportunity.startTime}</p>
             </div>
@@ -257,5 +284,4 @@ function BookingModal({ isOpen, onClose, opportunity, user, navigate }) {
     </div>
   );
 }
-
 export default FindDonation;
