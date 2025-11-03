@@ -6,14 +6,14 @@ import {
   where, 
   onSnapshot, 
   orderBy,
-  addDoc, // 1. Import addDoc
-  serverTimestamp // 2. Import serverTimestamp
+  addDoc, 
+  serverTimestamp 
 } from 'firebase/firestore';
-import { useAuth } from '../contexts/AuthContext'; // 3. Import useAuth
+import { useAuth } from '../contexts/AuthContext'; 
 import { useNavigate } from 'react-router-dom';
 
 function FindDonation() {
-  const { currentUser } = useAuth(); // 4. Get the current user
+  const { currentUser } = useAuth(); 
   const navigate = useNavigate();
 
   const [camps, setCamps] = useState([]);
@@ -21,11 +21,9 @@ function FindDonation() {
   const [loadingCamps, setLoadingCamps] = useState(true);
   const [loadingHospitals, setLoadingHospitals] = useState(true);
 
-  // 5. State to manage the modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
 
-  // --- Effects for fetching data (unchanged) ---
   useEffect(() => {
     const q = query(collection(db, "bloodCamps"), orderBy("date", "asc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -66,7 +64,6 @@ function FindDonation() {
     setIsModalOpen(true);
   };
 
-  // 7. Function to close the modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedOpportunity(null);
@@ -101,7 +98,6 @@ function FindDonation() {
         })()}
       </div>
 
-      {/* 8. Render the modal */}
       <BookingModal 
         isOpen={isModalOpen} 
         onClose={handleCloseModal} 
@@ -113,8 +109,7 @@ function FindDonation() {
   );
 }
 
-// --- Sub-Component for Camp Cards ---
-function CampCard({ camp, onBook }) { // 9. Accept onBook prop
+function CampCard({ camp, onBook }) { 
   const formattedDate = new Date(camp.date).toLocaleDateString(undefined, {
     year: 'numeric', month: 'long', day: 'numeric',
   });
@@ -131,7 +126,6 @@ function CampCard({ camp, onBook }) { // 9. Accept onBook prop
   );
 }
 
-// --- Sub-Component for Hospital Cards ---
 function HospitalCard({ hospital, onBook }) { 
   return (
     <div className="bg-white shadow-md rounded-xl p-6 border border-gray-100">
@@ -145,8 +139,6 @@ function HospitalCard({ hospital, onBook }) {
   );
 }
 
-
-// --- 13. NEW BOOKING MODAL COMPONENT ---
 function BookingModal({ isOpen, onClose, opportunity, user, navigate }) {
   const [requestedDate, setRequestedDate] = useState('');
   const [requestedTime, setRequestedTime] = useState('');

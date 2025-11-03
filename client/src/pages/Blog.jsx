@@ -8,7 +8,6 @@ function Blog() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Query the 'blogPosts' collection, order by creation date (newest first)
     const q = query(
       collection(db, "blogPosts"),
       orderBy("createdAt", "desc")
@@ -23,17 +22,15 @@ function Blog() {
       setLoading(false);
     }, (error) => {
       console.error("Error fetching blog posts: ", error);
-      // This will crash if you don't have the index
       if (error.code === 'failed-precondition') {
         alert("This page requires a new database index. Please open the console (F12) and click the link in the error message to create it.");
       }
       setLoading(false);
     });
 
-    return () => unsubscribe(); // Cleanup listener
+    return () => unsubscribe(); 
   }, []);
 
-  // Function to create a short snippet from the content
   const createSnippet = (text) => {
     if (!text) return '';
     return text.split(' ').slice(0, 30).join(' ') + '...';

@@ -28,7 +28,6 @@ function DonorProfile() {
     donationCount: 0,
   });
 
-  // Load existing profile data from context
   useEffect(() => {
     if (currentUser) {
       setProfileData({
@@ -103,13 +102,21 @@ function DonorProfile() {
         My Donor Profile
       </h1>
 
-      {/* --- BADGES SECTION --- */}
       <div className="mb-8 p-4 bg-gray-50 rounded-lg border">
-        <h2 className="text-xl font-semibold text-gray-700 mb-3">My Badges ({profileData.donationCount} Donations)</h2>
+        <h2 className="text-xl font-semibold text-gray-700 mb-3">My Stats</h2>
+
+        <div className="flex flex-wrap gap-4 mb-4">
+          <span className="px-3 py-1 text-sm font-medium bg-primary-100 text-primary-800 rounded-full">
+            🩸 {profileData.donationCount || 0} Blood Donations
+          </span>
+          <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+            💰 ₹{profileData.totalDonated || 0} Donated
+          </span>
+        </div>
+
+        <h3 className="text-lg font-semibold text-gray-700 mb-3 mt-4 border-t pt-4">My Badges</h3>
         {profileData.badges && profileData.badges.length > 0 ? (
           <div className="flex flex-wrap gap-2">
-            
-            {/* --- FIX 2: Use badge string as key --- */}
             {profileData.badges.map((badge) => (
               <span key={badge} className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
                 {badge === "First Time Hero" ? "🏆 " : ""}
@@ -123,13 +130,8 @@ function DonorProfile() {
           <p className="text-gray-500 text-sm">You have no badges yet. Confirm a donation to get started!</p>
         )}
       </div>
-      {/* --- END BADGES SECTION --- */}
 
-
-      {/* --- DONOR PROFILE FORM --- */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        
-        {/* --- FIX 1: Added File Input JSX --- */}
         <div className="flex flex-col items-center">
           <label htmlFor="profilePicture" className="text-gray-700 font-medium mb-2">
             Profile Picture
@@ -164,10 +166,7 @@ function DonorProfile() {
             )
             }
         </div>
-        {/* --- END FIX 1 --- */}
 
-        {/* Form fields (Name, Gender, Blood Type, etc.) */}
-        {/* Name */}
         <div>
           <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
             Full Name
@@ -184,7 +183,6 @@ function DonorProfile() {
           />
         </div>
 
-        {/* Gender */}
         <div>
           <label htmlFor="gender" className="block text-gray-700 font-medium mb-2">
             Gender
@@ -204,7 +202,6 @@ function DonorProfile() {
           </select>
         </div>
 
-        {/* Date of Birth */}
         <div>
           <label htmlFor="dateOfBirth" className="block text-gray-700 font-medium mb-2">
             Date of Birth
@@ -220,7 +217,6 @@ function DonorProfile() {
           />
         </div>
 
-        {/* Blood Type */}
         <div>
           <label htmlFor="bloodType" className="block text-gray-700 font-medium mb-2">
             Blood Type
@@ -245,7 +241,6 @@ function DonorProfile() {
           </select>
         </div>
 
-        {/* Email */}
         <div>
           <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
             Email
@@ -262,7 +257,6 @@ function DonorProfile() {
           />
         </div>
 
-        {/* Phone */}
         <div>
           <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">
             Phone Number
@@ -279,7 +273,6 @@ function DonorProfile() {
           />
         </div>
 
-        {/* Location */}
         <div>
           <label htmlFor="location" className="block text-gray-700 font-medium mb-2">
             Location (City / Region)
@@ -296,7 +289,6 @@ function DonorProfile() {
           />
         </div>
 
-        {/* Emergency Contact */}
         <div>
           <label htmlFor="emergencyContact" className="block text-gray-700 font-medium mb-2">
             Emergency Contact
@@ -313,7 +305,6 @@ function DonorProfile() {
           />
         </div>
 
-        {/* Last Donation Date */}
         <div>
           <label htmlFor="lastDonationDate" className="block text-gray-700 font-medium mb-2">
             Last Donation Date
@@ -329,7 +320,6 @@ function DonorProfile() {
           />
         </div>
 
-        {/* Availability */}
         <div>
           <label htmlFor="availability" className="block text-gray-700 font-medium mb-2">
             Availability Status
@@ -347,7 +337,6 @@ function DonorProfile() {
           </select>
         </div>
 
-        {/* Bio */}
         <div>
           <label htmlFor="bio" className="block text-gray-700 font-medium mb-2">
             Bio / Description
@@ -364,7 +353,6 @@ function DonorProfile() {
           ></textarea>
         </div>
 
-        {/* Save Button */}
         <div className="text-center pt-4">
           <button
             type="submit"

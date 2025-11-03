@@ -4,7 +4,6 @@ import ManageUsers from '../components/admin/ManageUsers';
 import ManageCamps from '../components/admin/ManageCamps';
 import ManageDonations from '../components/admin/ManageDonations';
 
-// Define our tabs
 const TABS = {
   APPROVAL: 'Approval',
   USERS: 'Users',

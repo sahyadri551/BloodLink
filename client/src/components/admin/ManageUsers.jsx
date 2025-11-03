@@ -8,8 +8,7 @@ function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // 1. Fetch all users from the 'users' collection
+
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
       const usersData = snapshot.docs.map(doc => ({
@@ -26,7 +25,6 @@ function ManageUsers() {
     return () => unsubscribe();
   }, []);
 
-  // 2. Handle the deletion of a user's *Firestore document*
   const handleDeleteUser = async (userToDelete) => {
     if (userToDelete.id === currentUser.uid) {
       alert("You cannot delete your own admin account.");
@@ -42,7 +40,6 @@ This action is irreversible.`)) {
 
     try {
       await deleteDoc(doc(db, "users", userToDelete.id));
-      // We also need to delete them from 'admins' or 'verifiedHospitals'
       if (userToDelete.role === 'hospital') {
         await deleteDoc(doc(db, "verifiedHospitals", userToDelete.id));
       }
@@ -56,7 +53,6 @@ This action is irreversible.`)) {
     }
   };
 
-  // 3. Client-side search logic
   const filteredUsers = users.filter(user => 
     user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -66,8 +62,6 @@ This action is irreversible.`)) {
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
       <h2 className="text-2xl font-semibold mb-4 text-gray-700">Manage All Users</h2>
-      
-      {/* Search Bar */}
       <input
         type="text"
         placeholder="Search by username, email, or role..."

@@ -111,7 +111,6 @@ function HospitalBookings() {
                   Request sent on: {formattedDate}
                 </p>
 
-                {/* Action Buttons for Pending Requests */}
                 {booking.status === 'pending' && (
                   <div className="flex gap-4 mt-4 border-t pt-4">
                     <button

@@ -25,6 +25,7 @@ import FindDonation from './pages/FindDonation';
 import MyBookings from './pages/MyBookings';
 import HospitalBookings from './pages/HospitalBookings';
 import Footer from './components/Footer';
+import DonateMoney from './pages/DonateMoney';
 
 function App() {
   return (
@@ -60,6 +61,10 @@ function App() {
           <Route 
             path="/my-bookings"
             element={<ProtectedRoute><MyBookings /></ProtectedRoute>} 
+          />
+          <Route 
+            path="/donate"
+            element={<ProtectedRoute><DonateMoney /></ProtectedRoute>} 
           />
           <Route
             path="/confirm-donation"

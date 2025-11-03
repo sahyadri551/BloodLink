@@ -48,7 +48,7 @@ function RequestBlood() {
         status: "active",
       });
 
-      alert("✅ Blood request submitted successfully!");
+      alert("Blood request submitted successfully!");
       setFormData({
         name: "",
         location: "",
@@ -58,7 +58,7 @@ function RequestBlood() {
         reason: "",
       });
     } catch (err) {
-      console.error("❌ Error submitting request:", err);
+      console.error("Error submitting request:", err);
       alert("Failed to submit request.");
     } finally {
       setLoading(false);

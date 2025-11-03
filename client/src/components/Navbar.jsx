@@ -30,6 +30,12 @@ function Navbar() {
           {currentUser ? (
             <>
               <NavLink
+                to="/donate"
+                className="bg-green-100 text-green-700 px-4 py-2 rounded-md hover:bg-green-200 transition font-medium"
+              >
+                Donate
+              </NavLink>
+              <NavLink
                 to="/blog"
                 className={({ isActive }) =>
                   isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-blue-600 font-medium"

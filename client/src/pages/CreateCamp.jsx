@@ -36,18 +36,17 @@ function CreateCamp() {
     setLoading(true);
 
     try {
-      // 1. Create a new document in the 'bloodCamps' collection
       await addDoc(collection(db, 'bloodCamps'), {
         ...formData,
-        hospitalId: currentUser.uid, // Tag the camp with the hospital's ID
-        hospitalName: currentUser.username || currentUser.email, // Use username or email
+        hospitalId: currentUser.uid, 
+        hospitalName: currentUser.username || currentUser.email, 
         createdAt: serverTimestamp(),
       });
 
-      alert(' Blood camp posted successfully!');
-      navigate('/admin-camps'); // Redirect to a management page (we'll build this next)
+      alert('Blood camp posted successfully!');
+      navigate('/admin-camps');
     } catch (error) {
-      console.error("❌ Error posting camp:", error);
+      console.error("Error posting camp:", error);
       alert('Failed to post camp. Please try again.');
     } finally {
       setLoading(false);
@@ -61,7 +60,6 @@ function CreateCamp() {
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Camp Name */}
         <div>
           <label htmlFor="campName" className="block text-gray-700 font-medium mb-2">
             Camp Name
@@ -78,7 +76,6 @@ function CreateCamp() {
           />
         </div>
 
-        {/* Location */}
         <div>
           <label htmlFor="location" className="block text-gray-700 font-medium mb-2">
             Location / Address
@@ -95,7 +92,6 @@ function CreateCamp() {
           />
         </div>
 
-        {/* Date */}
         <div>
           <label htmlFor="date" className="block text-gray-700 font-medium mb-2">
             Date
@@ -111,7 +107,6 @@ function CreateCamp() {
           />
         </div>
 
-        {/* Start & End Time */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="startTime" className="block text-gray-700 font-medium mb-2">
@@ -143,7 +138,6 @@ function CreateCamp() {
           </div>
         </div>
 
-        {/* Details */}
         <div>
           <label htmlFor="details" className="block text-gray-700 font-medium mb-2">
             Additional Details (Optional)
@@ -159,7 +153,6 @@ function CreateCamp() {
           ></textarea>
         </div>
 
-        {/* Submit Button */}
         <div className="text-center pt-4">
           <button
             type="submit"

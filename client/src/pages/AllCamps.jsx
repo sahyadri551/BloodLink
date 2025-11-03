@@ -7,10 +7,9 @@ function AllCamps() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Query the 'bloodCamps' collection, order by date
     const q = query(
       collection(db, "bloodCamps"),
-      orderBy("date", "asc") // Show upcoming camps first
+      orderBy("date", "asc") 
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -25,7 +24,7 @@ function AllCamps() {
       setLoading(false);
     });
 
-    return () => unsubscribe(); // Cleanup listener
+    return () => unsubscribe();
   }, []);
 
   return (

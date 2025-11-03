@@ -2,15 +2,16 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // --- RULES FOR 'users' ---
+    // --- UPDATED 'users' RULE ---
     match /users/{userId} {
       allow read: if true;
       allow create: if request.auth != null && request.auth.uid == userId;
+      
+      // We must add 'totalDonated' to the fields a user can update
       allow update: if request.auth != null && 
                       (request.auth.uid == userId ||
                        exists(/databases/(database)/documents/admins/$(request.auth.uid)));
       
-      // NEW DELETE RULE: Allow if you are the owner OR an admin
       allow delete: if request.auth != null && 
                       (request.auth.uid == userId ||
                        exists(/databases/(database)/documents/admins/$(request.auth.uid)));
@@ -85,6 +86,18 @@ service cloud.firestore {
                     request.auth.uid == resource.data.opportunityId &&
                     exists(/databases/(database)/documents/verifiedHospitals/$(request.auth.uid));
       allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    // --- NEW 'monetaryDonations' RULE ---
+    match /monetaryDonations/{donationId} {
+      // A user can only create their own donation record
+      allow create: if request.auth != null &&
+                      request.auth.uid == request.resource.data.userId;
+      
+      // Only an admin can read all donations
+      allow read: if request.auth != null &&
+                      exists(/databases/(database)/documents/admins/$(request.auth.uid));
+                      
+      allow update, delete: if false; // No one can change a donation record
     }
   }
 }

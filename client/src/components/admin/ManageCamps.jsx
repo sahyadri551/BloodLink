@@ -7,11 +7,10 @@ function ManageCamps() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // 1. Fetch all camps, ordered by date
   useEffect(() => {
     const q = query(
       collection(db, "bloodCamps"),
-      orderBy("date", "desc") // Show most recent first
+      orderBy("date", "desc")
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const campsData = snapshot.docs.map(doc => ({
@@ -28,7 +27,6 @@ function ManageCamps() {
     return () => unsubscribe();
   }, []);
 
-  // 2. Handle deleting a camp document
   const handleDeleteCamp = async (campId) => {
     if (!globalThis.confirm("Are you sure you want to permanently delete this camp?")) {
       return;
@@ -43,7 +41,6 @@ function ManageCamps() {
     }
   };
 
-  // 3. Client-side search logic
   const filteredCamps = camps.filter(camp =>
     camp.campName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     camp.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -53,8 +50,7 @@ function ManageCamps() {
   return (
     <div className="bg-white shadow-md rounded-xl p-6">
       <h2 className="text-2xl font-semibold mb-4 text-gray-700">Manage Blood Camps</h2>
-      
-      {/* Search Bar */}
+
       <input
         type="text"
         placeholder="Search by camp name, location, or hospital..."

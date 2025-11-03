@@ -19,7 +19,6 @@ function HospitalProfile() {
     profilePictureURL: '',
   });
 
-  // Load existing profile data from context
   useEffect(() => {
     if (currentUser) {
       setFormData({
@@ -62,13 +61,13 @@ function HospitalProfile() {
         profilePictureURL: photoURL || formData.profilePictureURL || null,
         uid: currentUser.uid,
         email: currentUser.email,
-        role: 'hospital', // Ensure role is maintained
-        isVerified: currentUser.isVerified, // Ensure verification status is maintained
+        role: 'hospital',
+        isVerified: currentUser.isVerified,
         updatedAt: new Date().toISOString(),
       };
 
       await setDoc(doc(db, 'users', currentUser.uid), dataToSave, { merge: true });
-      alert('✅ Profile saved successfully!');
+      alert('Profile saved successfully!');
       navigate('/');
     } catch (error) {
       console.error(' Error saving profile:', error);
@@ -84,7 +83,6 @@ function HospitalProfile() {
         Hospital / Blood Bank Profile
       </h1>
 
-      {/* Verification Status Badge */}
       <div className="text-center mb-6">
         {currentUser.isVerified ? (
           <span className="px-4 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
@@ -98,8 +96,6 @@ function HospitalProfile() {
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        
-        {/* --- THIS IS THE CORRECTED SECTION --- */}
         <div className="flex flex-col items-center">
           <label htmlFor="profilePicture" className="text-gray-700 font-medium mb-2">
             Organization Logo / Profile Picture
@@ -109,7 +105,7 @@ function HospitalProfile() {
             name="profilePicture"
             type="file"
             accept="image/*"
-            onChange={handleFileChange} // <-- This function is now used
+            onChange={handleFileChange} 
             className="block text-sm text-gray-500
               file:mr-4 file:py-2 file:px-4
               file:rounded-md file:border-0
@@ -134,9 +130,7 @@ function HospitalProfile() {
             )
           }
         </div>
-        {/* --- END OF FIX --- */}
 
-        {/* Hospital Name */}
         <div>
           <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
             Hospital / Organization Name
@@ -153,8 +147,6 @@ function HospitalProfile() {
           />
         </div>
 
-        {/* ... rest of the form ... */}
-        {/* Phone */}
         <div>
           <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">
             Official Phone Number
@@ -171,7 +163,6 @@ function HospitalProfile() {
           />
         </div>
 
-        {/* Location */}
         <div>
           <label htmlFor="location" className="block text-gray-700 font-medium mb-2">
             Address / Location
@@ -188,7 +179,6 @@ function HospitalProfile() {
           />
         </div>
 
-        {/* Bio */}
         <div>
           <label htmlFor="bio" className="block text-gray-700 font-medium mb-2">
             About

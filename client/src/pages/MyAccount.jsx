@@ -21,16 +21,11 @@ function MyAccount() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
-  // --- Re-authentication Helper ---
   const reauthenticate = async (password) => {
-    // 2. Use the raw auth.currentUser object here
     if (!auth.currentUser) return; 
-    
-    // currentUser.email is fine, it's just a string
     const credential = EmailAuthProvider.credential(currentUser.email, password);
     
     try {
-      // 3. Pass the RAW auth.currentUser to the function
       await reauthenticateWithCredential(auth.currentUser, credential); 
       return true;
     } catch (err) {
@@ -40,13 +35,10 @@ function MyAccount() {
     }
   };
 
-  // --- Password Change Logic ---
   const handleChangePassword = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
-    
-    // ... (Validation logic is correct) ...
     if (newPassword !== confirmPassword) {
       setError("New passwords do not match.");
       return;
@@ -65,7 +57,6 @@ function MyAccount() {
     }
 
     try {
-      // 4. Pass the RAW auth.currentUser here too
       await updatePassword(auth.currentUser, newPassword); 
       setMessage("Password updated successfully!");
       setCurrentPassword('');
@@ -79,7 +70,6 @@ function MyAccount() {
     }
   };
 
-  // --- Account Deletion Logic ---
   const handleDeleteAccount = async (e) => {
     e.preventDefault();
     setError('');
@@ -98,7 +88,6 @@ function MyAccount() {
     }
 
     try {
-      // 5. Pass the RAW auth.currentUser here
       await deleteUser(auth.currentUser); 
       alert("Account deleted successfully.");
       navigate('/login'); 
@@ -108,19 +97,13 @@ function MyAccount() {
       setLoading(false);
     }
   };
-
-  // --- The JSX/return is unchanged ---
   return (
     <div className="max-w-2xl mx-auto mt-12 p-8">
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
         My Account
       </h1>
-
-      {/* --- CHANGE PASSWORD FORM --- */}
       <form onSubmit={handleChangePassword} className="bg-white shadow-md rounded-xl p-8 space-y-4">
         <h2 className="text-2xl font-semibold text-gray-700">Change Password</h2>
-        
-        {/* Messages */}
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {message && <p className="text-green-500 text-sm">{message}</p>}
 
@@ -171,9 +154,7 @@ function MyAccount() {
         </div>
       </form>
 
-      {/* --- DELETE ACCOUNT FORM --- */}
       <form onSubmit={handleDeleteAccount} className="bg-white shadow-md rounded-xl p-8 mt-8 border-t-4 border-red-500 space-y-4">
-        {/* ... (rest of the delete form is unchanged) ... */}
         <h2 className="text-2xl font-semibold text-red-600">Delete Account</h2>
         <p className="text-gray-600">
           This action is permanent. All of your authentication data will be

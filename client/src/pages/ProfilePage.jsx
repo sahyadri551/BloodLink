@@ -9,7 +9,6 @@ function ProfilePage() {
     return <div className="text-center mt-20">Loading profile...</div>;
   }
 
-  // This is the core logic
   switch (currentUser.role) {
     case 'donor':
       return <DonorProfile />;
