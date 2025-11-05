@@ -1,63 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from '../firebase/config';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { auth } from "../firebase/config";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import "./AuthStyles.css";
 
-function Login() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-
-  const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-  });
-
+export default function Login() {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+
   useEffect(() => {
-  if (currentUser) {
-    console.log("User already logged in, redirecting to home...");
-    navigate('/');
-  }
-}, [currentUser, navigate]);
+    if (currentUser) navigate("/");
+  }, [currentUser, navigate]);
 
   const validate = () => {
-    let valid = true;
-    let newErrors = { email: '', password: '' };
-
-    if (!formData.email) {
-      newErrors.email = 'Email is required.';
-      valid = false;
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required.';
-      valid = false;
-    }
-
+    const newErrors = {};
+    if (!formData.email) newErrors.email = "Email is required.";
+    if (!formData.password) newErrors.password = "Password is required.";
     setErrors(newErrors);
-    return valid;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validate()) {
-      console.warn("Validation failed:", errors);
-      alert("Please fill in all required fields.");
-      return; 
-    }
+    if (!validate()) return;
 
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -65,97 +33,74 @@ function Login() {
         formData.email,
         formData.password
       );
-
       const user = userCredential.user;
 
       if (user.emailVerified) {
-        console.log("User signed in and verified:", user);
-        setFormData({ email: '', password: '' });
-        navigate('/');
+        navigate("/");
       } else {
-        console.warn("User signed in but email is NOT verified.");
-        alert("Your email is not verified. Please check your inbox for the verification link.");
+        alert("Please verify your email before logging in.");
         await signOut(auth);
-        navigate('/login');
       }
-
     } catch (error) {
-      console.error("Firebase login error:", error.code);
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        alert("Invalid email or password. Please try again.");
-      } else {
-        alert(error.message);
-      }
+      alert(
+        error.code === "auth/wrong-password" || error.code === "auth/user-not-found"
+          ? "Invalid email or password."
+          : error.message
+      );
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm"
-      >
-        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Login
-        </h1>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">Welcome Back 👋</h1>
+        <p className="auth-sub">Login to continue saving lives with BloodLink</p>
 
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-            className={`w-full px-3 py-2 border ${
-              errors.email ? 'border-red-500' : 'border-gray-300'
-            } rounded-md focus:outline-none focus:ring focus:ring-blue-200`}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-          )}
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="auth-field">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              placeholder="Enter your email"
+            />
+            {errors.email && <p className="error-text">{errors.email}</p>}
+          </div>
 
-        <div className="mb-4">
-          <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter your password"
-            className={`w-full px-3 py-2 border ${
-              errors.password ? 'border-red-500' : 'border-gray-300'
-            } rounded-md focus:outline-none focus:ring focus:ring-blue-200`}
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-          )}
-        </div>
+          <div className="auth-field">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              placeholder="Enter your password"
+            />
+            {errors.password && <p className="error-text">{errors.password}</p>}
+          </div>
 
-        <div className="text-right mb-4">
-          <Link
-            to="/forgot-password"
-            className="text-sm text-blue-600 hover:text-blue-800 underline"
-          >
-            Forgot Password?
+          <div className="auth-extra">
+            <Link to="/forgot-password">Forgot Password?</Link>
+          </div>
+
+          <button type="submit" className="auth-btn">
+            Log In
+          </button>
+        </form>
+
+        <p className="auth-bottom-text">
+          Don’t have an account?{" "}
+          <Link to="/register" className="auth-link">
+            Register
           </Link>
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md transition duration-200 hover:bg-blue-900"
-        >
-          Login
-        </button>
-      </form>
+        </p>
+      </div>
     </div>
   );
 }
-
-export default Login;

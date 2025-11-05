@@ -1,0 +1,122 @@
+/* === BloodLink Content Theme === */
+
+.page-root {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f8fafc;
+  color: #1f2937;
+  min-height: 100vh;
+  padding: 48px 16px;
+}
+
+.page-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px 48px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.3s ease;
+}
+
+.page-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  text-align: center;
+  color: #be123c;
+  margin-bottom: 12px;
+}
+
+.page-sub {
+  text-align: center;
+  color: #475569;
+  margin-bottom: 32px;
+  font-size: 1.05rem;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+  display: block;
+}
+.field-input,
+.field-textarea,
+.field-select {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+.field-input:focus,
+.field-textarea:focus {
+  border-color: #be123c;
+  box-shadow: 0 0 0 3px rgba(190, 18, 60, 0.2);
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #be123c, #e11d48);
+  color: white;
+  font-weight: 700;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(190, 18, 60, 0.25);
+}
+
+.btn-link {
+  color: #be123c;
+  text-decoration: none;
+  font-weight: 600;
+}
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.text-muted {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #be123c;
+  margin-bottom: 6px;
+}
+.card-meta {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+.card-body {
+  color: #334155;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

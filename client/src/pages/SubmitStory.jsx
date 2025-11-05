@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import "../styles/ContentStyles.css";
 
 function SubmitStory() {
   const { currentUser } = useAuth();
@@ -43,64 +44,40 @@ function SubmitStory() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-12 p-8">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-        Share Your Story
-      </h1>
-      <p className="text-center text-gray-600 mb-6">
-        Have you been impacted by a donation? Share your experience to inspire others.
+  <div className="page-root">
+    <div className="page-container">
+      <h1 className="page-title">Share Your Story</h1>
+      <p className="page-sub">
+        Tell the world how blood donation impacted your life.
       </p>
-      
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-xl p-8 space-y-6">
-        {/* Title */}
-        <div>
-          <label htmlFor="title" className="block text-gray-700 font-medium mb-2 text-lg">
-            Story Title
-          </label>
-          <input
-            id="title"
-            name="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g., How a Donation Saved My Father"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-            required
-          />
-        </div>
 
-        {/* Story Content */}
-        <div>
-          <label htmlFor="story" className="block text-gray-700 font-medium mb-2 text-lg">
-            Your Story
-          </label>
-          <textarea
-            id="story"
-            name="story"
-            rows="10"
-            value={story}
-            onChange={(e) => setStory(e.target.value)}
-            placeholder="Share your experience..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-            required
-          ></textarea>
-        </div>
+      <form onSubmit={handleSubmit}>
+        <label className="field-label">Story Title</label>
+        <input
+          className="field-input"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="How a donation saved my family"
+        />
 
-        {/* Submit Button */}
-        <div className="text-right pt-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`bg-primary-600 text-white px-6 py-2 rounded-md transition duration-200 ${
-              loading ? 'bg-gray-400' : 'hover:bg-primary-700'
-            }`}
-          >
-            {loading ? 'Submitting...' : 'Submit for Review'}
+        <label className="field-label mt-4">Your Story</label>
+        <textarea
+          className="field-textarea"
+          rows="10"
+          value={story}
+          onChange={(e) => setStory(e.target.value)}
+          placeholder="Share your experience..."
+        />
+
+        <div className="mt-5 text-right">
+          <button disabled={loading} className="btn-primary">
+            {loading ? "Submitting..." : "Submit for Review"}
           </button>
         </div>
       </form>
     </div>
-  );
+  </div>
+);
 }
 
 export default SubmitStory;

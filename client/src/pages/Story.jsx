@@ -1,76 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { db } from '../firebase/config';
-import { doc, getDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { db } from "../firebase/config";
+import { doc, getDoc } from "firebase/firestore";
+import "../styles/ContentStyles.css";
 
-function Story() {
+export default function Story() {
   const { storyId } = useParams();
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchStory = async () => {
-      setLoading(true);
+    const getStory = async () => {
       try {
-        const docRef = doc(db, "stories", storyId);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists() && docSnap.data().status === 'approved') {
-          setStory(docSnap.data());
-        } else {
-          setError("Story not found or is pending approval.");
-        }
-      } catch (err) {
-        console.error("Error fetching story:", err);
+        const snap = await getDoc(doc(db, "stories", storyId));
+        if (snap.exists() && snap.data().status === "approved")
+          setStory(snap.data());
+        else setError("Story not found or pending approval.");
+      } catch {
         setError("Failed to load story.");
       } finally {
         setLoading(false);
       }
     };
-
-    fetchStory();
+    getStory();
   }, [storyId]);
 
-  if (loading) {
-    return <p className="text-center text-gray-500 mt-20">Loading story...</p>;
-  }
+  if (loading) return <p className="text-muted text-center">Loading...</p>;
+  if (error) return <p className="text-muted text-center">{error}</p>;
+  if (!story) return null;
 
-  if (error) {
-    return <p className="text-center text-red-500 mt-20">{error}</p>;
-  }
-
-  if (!story) {
-    return null; 
-  }
-
-  const formattedDate = story.createdAt?.toDate
+  const date = story.createdAt?.toDate
     ? story.createdAt.toDate().toLocaleDateString()
-    : 'N/A';
+    : "N/A";
 
   return (
-    <div className="max-w-3xl mx-auto mt-12 p-8 bg-white shadow-md rounded-xl">
-      <h1 className="text-4xl font-bold text-gray-800 mb-4">
-        {story.title}
-      </h1>
-      <p className="text-sm text-gray-500 mb-6 border-b pb-4">
-        Shared by <strong>{story.authorName}</strong> on {formattedDate}
-      </p>
-      
-      <div className="prose lg:prose-xl max-w-none text-gray-700 whitespace-pre-wrap">
-        {story.story}
-      </div>
-
-      <div className="mt-8 border-t pt-4">
-        <Link
-          to="/stories"
-          className="font-medium text-primary-600 hover:text-primary-800"
-        >
-          &larr; Back to all stories
-        </Link>
+    <div className="page-root">
+      <div className="page-container">
+        <h1 className="page-title">{story.title}</h1>
+        <p className="text-muted text-center mb-6">
+          Shared by {story.authorName} on {date}
+        </p>
+        <div className="card-body">{story.story}</div>
+        <div className="mt-8 text-center">
+          <Link to="/stories" className="btn-link">
+            ← Back to Stories
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
-
-export default Story;

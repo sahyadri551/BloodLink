@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import HospitalApproval from '../components/admin/HospitalApproval';
-import ManageUsers from '../components/admin/ManageUsers';
-import ManageCamps from '../components/admin/ManageCamps';
-import ManageDonations from '../components/admin/ManageDonations';
-import ManageStories from '../components/admin/ManageStories';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import HospitalApproval from "../components/admin/HospitalApproval";
+import ManageUsers from "../components/admin/ManageUsers";
+import ManageCamps from "../components/admin/ManageCamps";
+import ManageDonations from "../components/admin/ManageDonations";
+import ManageStories from "../components/admin/ManageStories";
+import "./AdminDashboard.css";
 
 function TabButton({ title, isActive, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 font-medium rounded-md transition-colors ${
-        isActive ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-      }`}
+      className={`tab-btn ${isActive ? "active" : ""}`}
     >
       {title}
     </button>
@@ -26,14 +25,14 @@ TabButton.propTypes = {
 };
 
 const TABS = {
-  APPROVAL: 'Approval',
-  USERS: 'Users',
-  CAMPS: 'Camps',
-  DONATIONS: 'Donations',
-  STORIES: 'Stories',
+  APPROVAL: "Approvals",
+  USERS: "Users",
+  CAMPS: "Camps",
+  DONATIONS: "Donations",
+  STORIES: "Stories",
 };
 
-function AdminDashboard() {
+export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState(TABS.APPROVAL);
 
   const renderTabContent = () => {
@@ -54,42 +53,33 @@ function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-12 p-8">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800">Admin Dashboard</h1>
+    <div className="admin-root">
+      {/* Header */}
+      <header className="admin-header">
+        <div className="admin-container">
+          <h1 className="admin-title">Admin Dashboard 🩸</h1>
+          <p className="admin-sub">
+            Oversee hospitals, donors, and the BloodLink network with clarity and control.
+          </p>
+        </div>
+      </header>
 
-      <div className="flex space-x-2 mb-6 border-b pb-2">
-        <TabButton
-          title={TABS.APPROVAL}
-          isActive={activeTab === TABS.APPROVAL}
-          onClick={() => setActiveTab(TABS.APPROVAL)}
-        />
-        <TabButton
-          title={TABS.USERS}
-          isActive={activeTab === TABS.USERS}
-          onClick={() => setActiveTab(TABS.USERS)}
-        />
-        <TabButton
-          title={TABS.CAMPS}
-          isActive={activeTab === TABS.CAMPS}
-          onClick={() => setActiveTab(TABS.CAMPS)}
-        />
-        <TabButton
-          title={TABS.DONATIONS}
-          isActive={activeTab === TABS.DONATIONS}
-          onClick={() => setActiveTab(TABS.DONATIONS)}
-        />
-        <TabButton
-          title={TABS.STORIES}
-          isActive={activeTab === TABS.STORIES}
-          onClick={() => setActiveTab(TABS.STORIES)}
-        />
-      </div>
+      {/* Tab Controls */}
+      <div className="admin-container">
+        <div className="tabs">
+          {Object.values(TABS).map((tab) => (
+            <TabButton
+              key={tab}
+              title={tab}
+              isActive={activeTab === tab}
+              onClick={() => setActiveTab(tab)}
+            />
+          ))}
+        </div>
 
-      <div>
-        {renderTabContent()}
+        {/* Content */}
+        <div className="tab-content fadeIn">{renderTabContent()}</div>
       </div>
     </div>
   );
 }
-
-export default AdminDashboard;

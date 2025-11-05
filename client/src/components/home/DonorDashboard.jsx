@@ -12,11 +12,7 @@ export default function DonorDashboard() {
         <div className="donor-container donor-header-grid">
           <div>
             <h1 className="donor-title">
-              Welcome back,{" "}
-              <span className="highlight">
-                {currentUser.username || currentUser.name}
-              </span>
-              !
+              Welcome back,{" "}<span className="highlight">{currentUser.username || currentUser.name}</span>!
             </h1>
             <p className="donor-sub">
               Great to see you again. Here’s a quick look at your impact and

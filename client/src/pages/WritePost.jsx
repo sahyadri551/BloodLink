@@ -1,98 +1,83 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { db } from '../firebase/config';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { db } from "../firebase/config";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import "../styles/ContentStyles.css";
 
-function WritePost() {
+export default function WritePost() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title || !content) {
+    if (!title.trim() || !content.trim()) {
       alert("Please fill in both the title and content.");
       return;
     }
 
     setLoading(true);
-
     try {
       await addDoc(collection(db, "blogPosts"), {
-        title: title,
-        content: content,
-        authorName: currentUser.username || currentUser.email,
-        authorId: currentUser.uid,
+        title,
+        content,
+        authorName: currentUser?.username || currentUser?.email || "Anonymous",
+        authorId: currentUser?.uid || "guest",
         createdAt: serverTimestamp(),
       });
 
-      alert(' Blog post published successfully!');
-      navigate('/blog');
+      alert("✅ Blog post published successfully!");
+      navigate("/blog");
     } catch (error) {
-      console.error(" Error publishing post:", error);
-      alert('Failed to publish post. Please check console and security rules.');
+      console.error("Error publishing post:", error);
+      alert("Failed to publish post. Check console or Firebase rules.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-12 p-8">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-        Write a New Blog Post
-      </h1>
-      
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-xl p-8 space-y-6">
-        <div>
-          <label htmlFor="title" className="block text-gray-700 font-medium mb-2 text-lg">
-            Post Title
-          </label>
+    <div className="page-root">
+      <div className="page-container">
+        <h1 className="page-title">Write a New Blog Post</h1>
+        <p className="page-sub">
+          Share your experience or insight to inspire the BloodLink community.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="title" className="field-label">Post Title</label>
           <input
-            id="title"
-            name="title"
+            className="field-input"
             type="text"
+            id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="A catchy title for your post"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
-            required
           />
-        </div>
 
-        <div>
-          <label htmlFor="content" className="block text-gray-700 font-medium mb-2 text-lg">
+          <label htmlFor="content" className="field-label" style={{ marginTop: "1.2rem" }}>
             Content
           </label>
           <textarea
+            className="field-textarea"
+            rows="12"
             id="content"
-            name="content"
-            rows="15"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Write your article here. You can use Markdown, but it will be rendered as plain text for now."
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
-            required
-          ></textarea>
-        </div>
+            placeholder="Write your article here..."
+          />
 
-        <div className="text-right pt-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`bg-blue-600 text-white px-6 py-2 rounded-md transition duration-200 ${
-              loading ? 'bg-gray-400' : 'hover:bg-blue-700'
-            }`}
-          >
-            {loading ? 'Publishing...' : 'Publish Post'}
-          </button>
-        </div>
-      </form>
+          <div style={{ textAlign: "right", marginTop: "1.8rem" }}>
+            <button type="submit" disabled={loading} className="btn-primary">
+              {loading ? "Publishing..." : "Publish Post"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
-
-export default WritePost;
