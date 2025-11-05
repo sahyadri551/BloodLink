@@ -1,0 +1,138 @@
+/* LoggedOutHome.css - plain CSS that mimics the 2.pdf look */
+
+/* Root & container */
+.loh-root {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #1f2937; /* slate-800 */
+  background: #f8fafc; /* slate-50 */
+}
+.loh-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+/* HERO */
+.loh-hero {
+  background: linear-gradient(90deg, #9f1239 0%, #be123c 55%, #e11d48 100%);
+  color: white;
+  padding: 64px 0;
+  position: relative;
+  overflow: hidden;
+}
+.loh-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.loh-hero-title {
+  font-size: 44px;
+  line-height: 1.02;
+  margin: 0 0 16px 0;
+  font-weight: 800;
+}
+.loh-hero-title span { color: white; }
+.loh-hero-sub {
+  color: rgba(255,255,255,0.92);
+  font-size: 18px;
+  max-width: 520px;
+  margin-bottom: 22px;
+}
+.loh-google-btn {
+  width: 200px;
+  display: inline-block;
+  transform-origin: center;
+  transition: transform .18s ease;
+}
+.loh-google-btn:hover { transform: scale(1.03); }
+.loh-hero-image-wrap { text-align: center; }
+.loh-hero-image { max-width: 340px; display: inline-block; }
+
+/* FIND BAR - overlapping card */
+.loh-findbar-wrap { margin-top: -72px; padding: 0 24px 24px; z-index: 30; position: relative; }
+.loh-findbar {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(20,20,20,0.08);
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(15,23,42,0.04);
+}
+.loh-feature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 12px;
+  text-decoration: none;
+  color: #0f172a;
+  transition: background .12s ease;
+  flex-direction: column;
+}
+.loh-feature:hover { background: #f8fafc; }
+.loh-feature-icon {
+  background: rgba(236,72,153,0.08); /* soft primary */
+  padding: 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  display: inline-flex;
+}
+.loh-feature-title { font-weight: 600; font-size: 14px; }
+
+/* simple SVG sizing */
+.loh-svg { width: 28px; height: 28px; color: #be123c; }
+
+/* JOIN */
+.loh-join { padding: 64px 0; text-align: center; }
+.loh-section-title { font-size: 32px; font-weight: 700; margin: 0 0 12px 0; color: #0f172a; }
+.loh-lead { color: #475569; font-size: 16px; margin: 0 auto 20px; max-width: 720px; }
+.loh-cta-row { display:flex; gap: 16px; justify-content: center; margin-top: 18px; }
+.loh-btn { padding: 12px 22px; border-radius: 8px; font-weight: 700; text-decoration: none; display: inline-block; }
+.loh-btn-dark { background: #0f172a; color: white; }
+.loh-btn-dark:hover { background: #111827; }
+.loh-btn-primary { background: #be123c; color: white; }
+.loh-btn-primary:hover { background: #9f1239; }
+
+/* OUR AIM */
+.loh-aims { padding: 56px 0; background: #ffffff; }
+.loh-aim-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 20px;
+}
+.loh-aim-card {
+  padding: 22px;
+  background: #f8fafc;
+  border-radius: 12px;
+  text-align: center;
+  transition: box-shadow .15s ease, transform .15s ease;
+}
+.loh-aim-card:hover { box-shadow: 0 10px 20px rgba(2,6,23,0.08); transform: translateY(-6px); }
+.loh-aim-img { height: 78px; width: 78px; object-fit: contain; display:block; margin: 0 auto; }
+.loh-aim-title { margin-top: 12px; font-weight: 700; color: #0f172a; }
+
+/* BENEFITS */
+.loh-benefits { padding: 56px 0; background: #f8fafc; }
+.loh-benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+.loh-phone { max-width: 320px; display:block; margin: 0 auto; }
+.loh-small-title { color: #be123c; font-weight: 600; margin-bottom: 8px; }
+.loh-big-title { font-size: 36px; margin: 6px 0 18px; font-weight: 800; color: #0f172a; line-height: 1.05; }
+.loh-paragraph { color: #475569; font-size: 16px; margin-bottom: 18px; }
+.loh-benefit-lists { display:flex; gap: 28px; margin-bottom: 18px; }
+.loh-benefit-lists ul { list-style: none; padding: 0; margin: 0; color: #0f172a; }
+.loh-benefit-lists li { margin-bottom: 10px; font-weight: 600; }
+
+/* FAQ */
+.loh-faq { padding: 56px 0; background: linear-gradient(90deg,#9f1239,#be123c 50%,#e11d48); color: #fff; }
+.loh-faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+.loh-faq-list { color: rgba(255,255,255,0.92); margin-top: 8px; line-height: 1.9; padding-left: 18px; }
+.loh-compat { max-width: 420px; display:block; margin: 0 auto; border-radius: 10px; box-shadow: 0 10px 30px rgba(2,6,23,0.12); }
+
+/* Small helpers */
+.center { text-align: center; }
+.mt-18 { margin-top: 18px; }

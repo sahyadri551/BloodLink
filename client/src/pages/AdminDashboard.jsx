@@ -53,8 +53,6 @@ function AdminDashboard() {
     }
   };
 
-  // TabButton was moved to top-level and receives props for active state and click handler
-
   return (
     <div className="max-w-6xl mx-auto mt-12 p-8">
       <h1 className="text-3xl font-bold mb-8 text-gray-800">Admin Dashboard</h1>
